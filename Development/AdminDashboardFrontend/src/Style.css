@@ -1,0 +1,118 @@
+/* General styles for side-navbar*/
+.menu-aside {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .menu-item {
+    margin-bottom: 10px;
+  }
+  
+  .menu-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #555;
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .menu-link:hover,
+  .menu-link.active {
+    background-color: #f0f0f0;
+    color: #333;
+  }
+  
+  /* Media queries for responsiveness */
+  @media screen and (max-width: 768px) {
+    .navbar-aside {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      overflow-y: auto;
+      transition: 0.5s;
+    }
+  
+    .navbar-aside.open {
+      left: 0;
+    }
+  
+    .menu-aside {
+      flex-direction: column;
+    }
+  
+    .menu-link {
+      width: 100%;
+    }
+  }
+  
+  @media screen and (max-width: 576px) {
+    .navbar-aside {
+      width: 100%;
+    }
+  }
+  
+
+  /* General styles for header */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    background-color: #333; /* You can adjust the background color */
+    color: #fff; /* You can adjust the text color */
+  }
+  
+  .col-search,
+  .col-nav {
+    display: flex;
+    align-items: center;
+  }
+  
+  .searchform {
+    display: flex;
+    align-items: center;
+  }
+  
+  .input-group {
+    display: flex;
+    margin-right: 15px; /* Adjust spacing as needed */
+  }
+  
+  .form-control {
+    width: 200px; /* Adjust width as needed */
+  }
+  
+  .btn-light.bg {
+    margin-left: 5px; /* Adjust spacing as needed */
+  }
+  
+  /* Media queries for responsiveness */
+  @media screen and (max-width: 768px) {
+    .navbar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  
+    .col-search,
+    .col-nav {
+      width: 100%;
+      margin-bottom: 15px; /* Adjust spacing as needed */
+    }
+  
+    .input-group {
+      width: 100%;
+    }
+  
+    .form-control {
+      width: 100%;
+    }
+  
+    .btn-light.bg {
+      margin-left: 0;
+      margin-top: 10px; /* Adjust spacing as needed */
+    }
+  }
+  
