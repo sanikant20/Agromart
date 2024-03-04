@@ -1,45 +1,53 @@
 import React, { useState } from 'react';
 import Colors from "../colors";
-import { Box, Heading, Input, Text, VStack, Image, Button, Pressable, Link } from 'native-base';
+import { Box, Heading, Input, VStack, Image, Button, Text } from 'native-base';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
-// import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
 function LoginScreen() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const navigation = useNavigation();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = async () => {
     try {
-      const response = await fetch("http://192.168.1.77:5000/api/login", {
-        method: "POST",
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password
-        })
-      });
-      const data = await response.json();
-      console.log(data);
+      setError('');
 
-      // if (data) {
-      //   console.log(name)
-      //   console.log(role)
-      //   console.log(location)
-      //   console.log(email)
-      //   console.log(password)
-      // }
-      return data;
+      if (!email || !password) {
+        setError('Please provide both email and password.');
+        return;
+      }
+
+      const response = await fetch("http://192.168.56.1:5000/api/login", {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const result = await response.json();
+      console.log(result);
+
+      if (!result || !result.auth || result.role) {
+        setError('Invalid email, password, or user role with this email.');
+        return;
+      }
+
+      navigation.navigate('Menu');
 
     } catch (error) {
-      console.error(error)
+      console.error("Error:", error);
+      setError('An error occurred while logging in.');
     }
-  }
+  };
 
-
+  const RegisterPage = () => {
+    // Navigate to the signup screen 
+    navigation.navigate('SignUp');
+  };
 
   return (
     <Box flex={1} bg={Colors.black}>
@@ -58,53 +66,53 @@ function LoginScreen() {
           {/* Email */}
           <Input
             InputLeftElement={<MaterialIcons name="email" size={24} color="black" />}
-            variant="underlined" placeholder='use@gmail.com'
+            variant="underlined"
+            placeholder='use@gmail.com'
             w="70%"
             fontSize={18}
             color={Colors.main}
             borderBottomColor={Colors.underline}
-            onChange={(event) => setEmail(event.nativeEvent.text)}
-
+            value={email}
+            onChangeText={(text) => setEmail(text)}
           />
 
           {/* Password */}
           <Input
             InputLeftElement={<AntDesign name="eye" size={24} color="black" />}
-            variant="underlined" placeholder='password'
+            variant="underlined"
+            placeholder='password'
             w="70%"
             fontSize={18}
             type='password'
             color={Colors.main}
             borderBottomColor={Colors.underline}
-
-            onChange={(event) => setPassword(event.nativeEvent.text)}
-
+            value={password}
+            onChangeText={(text) => setPassword(text)}
           />
         </VStack>
-
+        {error && (
+          <Text style={{ color: "red" }}>{error}</Text>
+        )}
         <Button
           _pressed={{ bg: Colors.main }}
-          my={30} w={'40%'} rounded={45}
+          my={15} w={'60%'} rounded={45}
           bg={Colors.main}
           onPress={handleLogin}
-         
         >
           LOGIN
         </Button>
 
-
-        <Pressable mt={4}>
-          <Text color={Colors.black} fontWeight="bold">
-
-            <Link ml="auto" color={Colors.main} fontWeight="bold" alignContent={"center"}>
-              SIGN UP
-            </Link>
-          </Text>
-        </Pressable>
-
+        <Button
+          _pressed={{ bg: Colors.main }}
+          my={15} w={'60%'} rounded={45}
+          bg={Colors.red}
+          onPress={RegisterPage}
+        >
+          Don't have account? Signup
+        </Button>
       </Box>
     </Box>
-  )
+  );
 }
 
 export default LoginScreen;

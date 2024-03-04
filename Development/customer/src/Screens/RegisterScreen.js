@@ -1,50 +1,79 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import Colors from "../colors";
-import { Box, Heading, Input, Text, VStack, Image, Button, Pressable, Link, Select } from 'native-base';
+import { Box, Heading, Input, VStack, Image, Button } from 'native-base';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 
 function RegisterScreen() {
-  const [name, setName] = useState('');
-  const [role, setRoleUser] = useState('');
-  const [location, setLocation] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const navigation = useNavigation();
+  const [name, setName] = useState("");
+  const [role, setRole] = useState("");
+  const [location, setLocation] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-
-  const handleSIgnup = async () => {
+  // Check email api
+  const checkEmailExistence = async () => {
     try {
-      const response = await fetch("http://192.168.1.77:5000/api/register", {
+      const checkResponse = await fetch("http://192.168.1.77:5000/api/check-email", {
         method: "POST",
+        body: JSON.stringify({ email: email }),
         headers: {
-          'Accept': 'application/json',
           'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          name: name,
-          role: role,
-          location: location,
-          email: email,
-          password: password
-        })
-      });
-      const data = await response.json();
-      console.log(data);
-
-      // if (data) {
-      //   console.log(name)
-      //   console.log(role)
-      //   console.log(location)
-      //   console.log(email)
-      //   console.log(password)
-      // }
-      return data;
+        }
+      })
+      const checkJson = await checkResponse.json();
+      return checkJson.emailExists;
 
     } catch (error) {
-      console.error(error)
+      console.error("Error checking email existence:", error);
+      return false;
     }
-  }
+  };
+
+  const handleSignup = async (e) => {
+    // Email existence
+    const emailExists = await checkEmailExistence();
+
+    if (emailExists) {
+      alert("Email already exists. Choose a different email address.");
+      return;
+    }
+
+    // Create new user
+    try {
+      setError('');
+      if (!name || !role || !location || !email || !password) {
+        setError('Please provide all details.');
+        return;
+      }
+
+      // Fetching the server with a POST request for signup
+      let result = await fetch('http://192.168.1.77:5000/api/register', {
+        method: 'POST',
+        body: JSON.stringify({ name, role, location, email, password }), // Removed userImage
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      result = await result.json();
+      console.log(result);
+      navigation.navigate('Menu');
+
+    } catch (error) {
+      console.error("Error:", error);
+      setError('An error occurred while registering.');
+    }
+
+  };
+
+  const AlreadySignup = () => {
+    navigation.navigate('Login');
+  };
 
   return (
     <Box flex={1} bg={Colors.black}>
@@ -60,7 +89,6 @@ function RegisterScreen() {
         <Heading>Sign Up</Heading>
 
         <VStack space={5} pt="6">
-
           {/* Name */}
           <Input
             InputLeftElement={<AntDesign name="user" size={24} color="black" />}
@@ -82,7 +110,7 @@ function RegisterScreen() {
             color={Colors.main}
             borderBottomColor={Colors.underline}
             value={role}
-            onChangeText={(user) => setRoleUser("user")}
+            onChangeText={(User) => setRole(User)}
           />
 
           {/* Address */}
@@ -125,23 +153,25 @@ function RegisterScreen() {
 
         <Button
           _pressed={{ bg: Colors.main }}
-          my={30} w={'40%'} rounded={45}
+          my={15}
+          w={'60%'}
+          rounded={45}
           bg={Colors.main}
-          onPress={handleSIgnup}
+          onPress={handleSignup}
         >
-          Signup
+          SIGNUP
         </Button>
 
-
-        <Pressable mt={4}>
-          <Text color={Colors.black} fontWeight="bold">
-
-            <Link ml="auto" color={Colors.main} fontWeight="bold" alignContent={"center"}>
-              Login
-            </Link>
-          </Text>
-        </Pressable>
-
+        <Button
+          _pressed={{ bg: Colors.main }}
+          my={15}
+          w={'60%'}
+          rounded={45}
+          bg={Colors.blue}
+          onPress={AlreadySignup}
+        >
+          Already have account? Login
+        </Button>
       </Box>
     </Box>
   )
