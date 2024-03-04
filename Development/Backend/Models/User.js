@@ -28,6 +28,10 @@ const UserSchema = new Schema({
         type: Date,
         default: Date.now
     },
+    userImage:{
+        data: Buffer,
+        contentType: String
+    }
 });
 
 module.exports = mongoose.model('user', UserSchema);

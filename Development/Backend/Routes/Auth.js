@@ -2,96 +2,149 @@ const express = require('express');
 const app = express()
 app.use(express.json())
 const router = express.Router();
-
 const User = require("../Models/User");
 
+router.use(express.json());
+
 const bcrypt = require('bcrypt');
+const SALT = 10;
 const jwt = require('jsonwebtoken');
-const jwtSecret = "agromartmernstackproject";
-
-const { body, validationResult } = require('express-validator');
+const jwtKey = 'eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTY5MTU1MTMwNCwiaWF0IjoxNjkxNTUxMzA0fQ.JBLvqDC6E5fuaGtSQlzHUyBaKg5Y3MWnF3QZj0bKIBg';
 
 
+// API to check existing email
+router.post('/check-email', async (req, res) => {
+    const { email } = req.body;
 
-// API for register
-router.post(
-    '/register',
-    [
-        body('email').isEmail(),
-        body('password').isLength({ min: 5 }),
-    ],
-    async (req, resp) => {
-        // Error validation for request
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return resp.status(400).json({ errors: errors.array() });
+    try {
+        const user = await User.findOne({ email });
+        if (user) {
+            res.json({ emailExists: true });
+        } else {
+            res.json({ emailExists: false });
         }
-
-        try {
-            // Check if the email already exists in the database
-            const existingUser = await User.findOne({ email: req.body.email });
-            if (existingUser) {
-                return resp
-                    .status(400)
-                    .json({ success: false, errors: [{ msg: 'User with provided email already exists. Please use another email' }] });
-            }
-
-            // Make password secure
-            const SALT = await bcrypt.genSalt(10);
-            const securePassword = await bcrypt.hash(req.body.password, SALT);
-
-            // Create new user with the valid info
-            await User.create({
-                name: req.body.name,
-                role: req.body.role,
-                location: req.body.location,
-                email: req.body.email,
-                password: securePassword,
-            });
-
-            return resp.status(200).json({ success: true, msg: 'User registered successfully' });
-        } catch (error) {
-            console.error(error);
-            return resp.status(500).json({ success: false, errors: [{ msg: 'Internal server error occurred.' }] });
-        }
+    } catch (error) {
+        console.error("Error checking email:", error);
+        res.status(500).json({ error: "Failed to check email." });
     }
-);
+});
+
+// API for the registration of new user
+router.post("/register", async (req, resp) => {
+    try {
+        const { name, role, location, email, password} = req.body;
+
+        // Hash the password
+        const hashPassword = await bcrypt.hash(password, SALT);
+
+        // Create a new user with the hashed password
+        const user = new User({
+            name,
+            role,
+            location,
+            email,
+            password: hashPassword,
+        });
+
+        // Save the user to the database
+        let result = await user.save();
+        result = result.toObject();
+        delete result.password;
+
+        // Create and send a JWT token
+        jwt.sign({ result }, jwtKey, { expiresIn: '2h' }, (err, token) => {
+            if (err) {
+                resp.status(500).send("Something wrong, Please try later...");
+            }
+            else {
+                // Log the decoded payload for debugging
+                const decoded = jwt.decode(token);
+                console.log('Decoded Token:', decoded);
+
+                resp.send({ result, auth: token });
+            }
+        });
+    } catch (error) {
+        resp.status(500).send({ error: "Failed to register user." });
+    }
+});
+
+
 
 // API for login
-router.post('/login', [
-    body('email').isEmail(),
-    body('password').isLength({ min: 5 })
-],
-    async (req, resp) => {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return resp.status(400).json({ errors: errors.array() });
+router.post("/login", async (req, resp) => {
+    try {
+        const { email, password } = req.body;
+
+        if (email && password) {
+            // Find user by email
+            const user = await User.findOne({ email });
+
+            if (user) {
+                // Compare the provided password with the hashed password in the database
+                const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+                if (isPasswordMatch) {
+                    // IF Passwords match, generate and send JWT token
+                    jwt.sign({ user }, jwtKey, { expiresIn: '2h' }, (err, token) => {
+                        if (err) {
+                            resp.status(500).send("Something wrong, Please try later...");
+                        }
+                        else {
+                            // Log the decoded payload for debugging
+                            const decoded = jwt.decode(token);
+                            console.log('Decoded Token:', decoded);
+
+                            resp.send({ user, auth: token }); // Change result to user
+                        }
+                    });
+                } else {
+                    resp.send({ result: "Invalid email or password." });
+                }
+            } else {
+                resp.send({ result: "No user found." });
+            }
+        } else {
+            resp.status(400).send({ result: "Invalid request. Please provide both email and password." });
+        }
+    } catch (error) {
+        resp.status(500).send({ error: "Failed to login." });
+    }
+});
+
+// API to change admin password
+router.post("/changePassword/:id", async (req, resp) => {
+    try {
+        const { email, oldPassword, newPassword, confirmPassword } = req.body;
+        const user = await User.findOne({ email })
+
+        if (!user) {
+            console.error("No user found with this email");
         }
 
-        try {
-            const filter = { email: req.body.email };
-            const userData = await User.findOne(filter);
+        const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
+        console.log(isPasswordMatch);
 
-            if (!userData) {
-                // Avoid revealing whether the email exists
-                return resp.status(400).json({ errors: [{ msg: "Invalid credentials." }] });
-            }
-
-            const isPasswordValid = await bcrypt.compare(req.body.password, userData.password);
-
-            if (!isPasswordValid) {
-                return resp.status(400).json({ errors: [{ msg: "Invalid credentials." }] });
-            }
-
-            // Create a token with user ID
-            const authToken = jwt.sign({ user: { id: userData.id } }, jwtSecret);
-
-            return resp.json({ success: true, authToken: authToken });
-
-        } catch (error) {
-            console.error(error);
-            return resp.status(500).json({ errors: [{ msg: "Internal server error." }] });
+        if (!isPasswordMatch) {
+            return resp.send({ result: "old password is incorrect" })
         }
-    });
+
+        if (newPassword !== confirmPassword) {
+            return resp.send({ result: "new password & confirm password doesn't matched." })
+        }
+
+        const hashNewPassword = await bcrypt.hash(newPassword, SALT)
+
+        // Update the user's password in the database
+        user.password = hashNewPassword;
+
+        await user.save()
+        resp.send({ result: "Password changed" })
+
+    } catch (error) {
+        resp.status(500).send({ error: "Failed to change password." });
+    }
+})
+
 
 module.exports = router;

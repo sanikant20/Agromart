@@ -16,23 +16,3 @@ db.once('open', async()=>{
         console.error("Error in conntecting to database.")
     }
 });
-
-// const MongoClient = require('mongodb').MongoClient;
-
-// const uri = "mongodb://127.0.0.1:27017/agromart";
-// const client = new MongoClient(uri,
-//     {
-//         useNewUrlParser: true,
-//         useUnifiedTopology: true
-//     });
-
-// client.connect( errror =>{
-//     if(error){
-//         console.error("Error connecting to MongoDB:", error);
-//     }
-//     else{
-//         console.log("Connected to MongoDB");
-
-//     }
-// });
-
