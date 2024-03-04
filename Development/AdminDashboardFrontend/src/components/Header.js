@@ -7,11 +7,16 @@ const Header = () => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-
-        console.log("Logout successfull.", localStorage.removeItem('token'))
+        localStorage.clear('token');
+        console.log("Logout successful.");
         navigate('/login');
     }
 
+    // getting the userID from the local storage
+    var userID = JSON.parse(window.localStorage.getItem("user"))._id;
+
+
+    // Dropdown toggle handler
     useEffect(() => {
         const handleDropdownToggle = (e) => {
             e.preventDefault();
@@ -31,6 +36,7 @@ const Header = () => {
             $('[data-bs-toggle="dropdown"]').off("click", handleDropdownToggle);
         };
     }, []);
+
 
     return (
         <header className="main-header navbar">
@@ -58,22 +64,22 @@ const Header = () => {
             </div>
             <div className="col-nav">
                 <ul className="nav">
-                    <li className="dropdown nav-item" style={{marginRight: "130px"}}>
+                    <li className="dropdown nav-item" style={{ marginRight: "130px" }}>
                         <Link
                             className="dropdown-toggle"
                             data-bs-toggle="dropdown"
-                            to={"/adminprofile"}
+                            // to={"/adminprofile/"}
                         >
                             <img
                                 className="img-xs rounded-circle"
-                                src="/images/profile1.jpg"
+                                src="/images/sani.jpg"
                                 alt="user"
                             />
                         </Link>
 
                         <div className="dropdown-menu dropdown-menu-end">
-                            <Link className="dropdown-item" to={'/AdminProfile'}>Profile</Link>
-
+                            <Link className="dropdown-item" to={`/adminProfile/` + userID}>Profile</Link>
+                            
                             <button onClick={handleLogout} className="dropdown-item">Logout</button>
                         </div>
                     </li>

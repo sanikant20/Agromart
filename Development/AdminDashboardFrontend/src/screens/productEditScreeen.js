@@ -2,22 +2,19 @@ import React from "react";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 import EditProduct from "../components/Products/EditProduct";
-// import Products from "../data/Products";
 
-// const ProductEdit = ({match}) => {
-//     const productId = Products.find((p)=> p._id === match.params.id);
-
-const ProductEdit = () => {
+const ProductEdit = ({ match }) => {
+    // console.log("ProductID", match.params.id)
     return (
         <div>
-            <Sidebar></Sidebar>
+            <Sidebar />
             <main className="main-wrap">
-                <Header></Header>
-                {/* <EditProduct productId = {productId} /> */}
+                <Header />
+                {/* <EditProduct productId={match.params.id} /> */}
                 <EditProduct />
             </main>
         </div>
-    )
-}
+    );
+};
 
 export default ProductEdit;

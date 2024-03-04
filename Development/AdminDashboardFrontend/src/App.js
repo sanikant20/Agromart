@@ -1,7 +1,6 @@
 import React from 'react';
 import './App.css';
 import './Responsive.css'
-// import './Style.css'
 import "react-toastify/dist/ReactToastify.css";
 
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
@@ -21,28 +20,37 @@ import UserScreen from './screens/UserScreen';
 import PageNotFound from './screens/PageNotFound';
 import AdminScreen from './screens/AdminScreen';
 import EditAdminInfo from './screens/EditAdminInfo';
+import EditCategory from './screens/EditCategoryScreen';
+import ChangePassword from './screens/ChangePasswordScreen';
+import UserDetailScreen from './screens/UserDetailScreen';
 
 
+window.Buffer = window.Buffer || require("buffer").Buffer;
 function App() {
   return (
     <Router>
       <Routes>
-        <Route path='/login' element={<Signin />} exact />
+        
+        <Route path='/login' element={<Signin />}  />
         <Route path='/signup' element={< Signup />} />
 
-        <Route path="/" element={<HomeScreen />} />
+        <Route path="/" element={<HomeScreen />} exact/>
         <Route path="/products" element={<ProductScreen />} />
         <Route path="/addProduct" element={<AddProducts />} />
-        <Route path="/editProduct" element={<EditProduct />} />
-        <Route path="/category" element={<CategoryScreen />} />
+        <Route path="/product/:id" element={<EditProduct />} />
+
+        <Route path="/categories" element={<CategoryScreen />} />
+        <Route path="/category/:id" element={<EditCategory />} />
 
         <Route path="/orders" element={<OrderScreen />} />
         <Route path='/order' element={<OrderDetailScreen />} />
 
         <Route path='/users' element={<UserScreen />} />
+        <Route path='/userDetails/:id' element={< UserDetailScreen/>}/>
 
-        <Route path='/adminProfile' element={<AdminScreen />} />
-        <Route path='/editAdminInfo' element={ <EditAdminInfo />}/>
+        <Route path='/adminProfile/:id' element={<AdminScreen />} />
+        <Route path='/editAdminInfo/:id' element={<EditAdminInfo />} />
+        <Route path='/changePassword/:id' element={<ChangePassword />}/>
 
         <Route path='*' element={<PageNotFound />} />
 

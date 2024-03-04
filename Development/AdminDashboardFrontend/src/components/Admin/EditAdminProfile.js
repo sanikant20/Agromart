@@ -1,20 +1,89 @@
-import { Link } from 'react-router-dom';
-
-const React = require('react');
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const EditAdminProfile = () => {
+    const [name, setName] = useState('')
+    const [location, setLocation] = useState('')
+    const [role, setRole] = useState('')
+    const [email, setEmail] = useState('')
+    const [image, setImage] = useState('')
+
+    const params = useParams();
+    const navigate = useNavigate();
+
+    // getting the userID from the local storage
+    var userID = JSON.parse(window.localStorage.getItem("user"))._id;
+
+    // Get the admin details for edit
+    useEffect(() => {
+        const adminProfile = async () => {
+            try {
+                let result = await fetch(`http://localhost:5000/api/adminProfile/${params.id}`)
+                if (!result.ok) {
+                    throw new Error(`Failed to fetch product details. Status: ${result.status}`);
+                }
+                let data = await result.json();
+                console.log(data);
+
+                setName(data.name);
+                setLocation(data.location);
+                setRole(data.role);
+                setEmail(data.email);
+                setImage(data.image);
+
+            } catch (error) {
+                if (error instanceof TypeError) {
+                    console.error("Network error. Please check your internet connection.", error);
+                } else {
+                    console.error("Error fetching product details:", error.message);
+                }
+            }
+
+        }
+        adminProfile();
+    }, [])
+
+    // Update the admin details
+    const editProfile = async (e) => {
+        e.preventDefault(); 
+        try {
+            let result = await fetch(`http://localhost:5000/api/editProfile/${params.id}`, {
+                method: "PUT",
+                body: JSON.stringify({
+                    name, location, email
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (result.ok) {
+                let jsonData = await result.json();
+                console.log(jsonData);
+                alert("Profile updated");
+                navigate(`/adminProfile/${params.id}`);
+            } else {
+                console.error("Error in updating.");
+                alert("Error in update");
+            }
+
+        } catch (error) {
+            if (error instanceof TypeError) {
+                console.error("Network error. Please check your internet connection.", error);
+            } else {
+                console.error("Error updating admin profile:", error.message);
+            }
+        }
+    };
+
     return (
         <div>
             <section className="content-main" style={{ maxWidth: "1200px" }}>
                 <form>
                     <div className="content-header d-flex justify-content-between align-items-center">
-                        <Link to="/adminProfile" className="btn btn-danger text-white">
-                            Go to Profile
-                        </Link>
+
                         <h2 className="content-title">Update Profile</h2>
-                        <button type="submit" className="btn btn-primary">
-                            Save
-                        </button>
+
                     </div>
 
                     <div className="row mt-4">
@@ -23,7 +92,6 @@ const EditAdminProfile = () => {
                                 <div className="card-body">
 
                                     <div className="mb-3">
-
                                         <label htmlFor="admin_name" className="form-label">
                                             Name
                                         </label>
@@ -33,8 +101,9 @@ const EditAdminProfile = () => {
                                             placeholder="Type here"
                                             className="form-control"
                                             id="admin_name"
-                                            //   value={productId.category}
-                                            // readOnly
+                                            value={name}
+                                            onChange={(e) => setName(e.target.value)}
+                                        // readOnly
                                         />
                                     </div>
 
@@ -47,8 +116,9 @@ const EditAdminProfile = () => {
                                             placeholder="Type here"
                                             className="form-control"
                                             id="admin_role"
-                                        //   value={productId.name}
-                                          readOnly
+                                            value={role}
+                                            onChange={(e) => setRole(e.target.value)}
+                                            readOnly
                                         />
                                     </div>
 
@@ -57,12 +127,12 @@ const EditAdminProfile = () => {
                                             Address
                                         </label>
                                         <input
-                                            type="number"
+                                            type="text"
                                             placeholder="Type here"
                                             className="form-control"
                                             id="address"
-                                        //   value={productId.price}
-                                        //   readOnly
+                                            value={location}
+                                            onChange={(e) => setLocation(e.target.value)}
                                         />
                                     </div>
 
@@ -71,12 +141,12 @@ const EditAdminProfile = () => {
                                             Email
                                         </label>
                                         <input
-                                            type="number"
+                                            type="text"
                                             placeholder="Type here"
                                             className="form-control"
                                             id="email"
-                                        //   value={productId.quantity}
-                                        //   required
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
                                         />
                                     </div>
 
@@ -89,10 +159,23 @@ const EditAdminProfile = () => {
                                             placeholder="Enter Image URL"
                                             className="form-control"
                                             id="profile_image"
-                                        //   value={productId.image}
-                                        //   required
+                                            value={image}
+                                            onChange={(e) => setImage(e.target.value)}
                                         />
                                     </div>
+
+                                    <div className="mb-3 d-flex justify-content-between">
+                                        <Link to={`/adminProfile/` + userID} className="btn btn-danger text-white">
+                                            Go to Profile
+                                        </Link>
+                                        <button
+                                            type="button"
+                                            onClick={editProfile}
+                                            className="btn btn-primary">
+                                            Save
+                                        </button>
+                                    </div>
+
                                 </div>
                             </div>
                         </div>

@@ -61,7 +61,7 @@ const Sidebar = () => {
                         <li className="menu-item">
                             <NavLink activeClassName="active"
                                 className="menu-link"
-                                to="/category"
+                                to="/categories"
                                 exact={true}
                             >
                                 <i className="icon fas fa-warehouse"></i>

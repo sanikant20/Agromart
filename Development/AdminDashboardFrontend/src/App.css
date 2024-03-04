@@ -384,9 +384,6 @@ display: block;
   
 }
 
-
-/* =============== 370 - 390 left =========================== */
-
 .title-text{
   margin-top: 45px;
   margin-bottom: 20px;
@@ -410,7 +407,7 @@ a[class*="card"]{
 }
 
 
-/* ===== 413 - 430 left ===== */
+
 
 .itemside .aside, .itemside .left{
   position: relative;
@@ -484,3 +481,9 @@ a[class*="card"]{
 .form-select {
   margin-bottom: 10px; 
 }
+
+
+.row {
+  margin-left: 300px;
+}
+

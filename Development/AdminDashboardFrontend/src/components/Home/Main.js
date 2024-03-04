@@ -25,8 +25,7 @@ const Main = () => {
                 <div className="card mb-4 shadow-sm">
                     < LatestOrder />
                 </div>
-            </section>
-       
+            </section>  
     )
 }
 

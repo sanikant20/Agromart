@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import TopTotal from "../Home/TopTotal";
 
 const UserMain = () => {
 
     const [users, setUsers] = useState([]);
 
     useEffect(() => {
-
         const getUsers = async (req, resp) => {
             try {
                 let response = await fetch("http://localhost:5000/api/users");
@@ -17,19 +17,18 @@ const UserMain = () => {
 
                 const result = await response.json();
                 setUsers(result);
-
+                // setTotalUsers(result.length);
             } catch (error) {
                 console.error("Error in fetching users data.")
             }
-
         }
-
         getUsers();
-
     }, [])
 
     return (
         <section className="content-main">
+            <TopTotal totalUsers= {users.length}  />
+            
             <div className="content-header">
                 <h2 className="content-title">Customer</h2>
                 <div>
@@ -73,10 +72,15 @@ const UserMain = () => {
                     <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4">
 
                         {users.map((user) => (
+
                             <div className="col mb-3">
+
                                 <div className="card card-user shadow-sm p-2">
                                     <div className="card-header text-center">
-                                        <img className="img-md img-avatar" src="/images/profile2.jpeg" alt="Admin pic" />
+                                        <Link to={`/userDetails/${user._id}`}>
+
+                                            <img className="img-md img-avatar" src="/images/sani.jpg" alt="Admin pic" />
+                                        </Link>
                                     </div>
 
                                     <div className="card-body">
@@ -94,28 +98,8 @@ const UserMain = () => {
                             </div>
                         ))}
 
-
-                        {/* User card */}
-                        {/* <div className="col">
-                            <div className="card card-user shadow-sm">
-                                <div className="card-header">
-                                    <img className="img-md img-avatar" src="/images/1 logo.jpg" alt="User pic" />
-                                </div>
-                                <div className="card-body">
-                                    <h5 className="card-title mt-5">User</h5>
-                                    <div className="card-text text-muted">
-                                        <p className="m-0">Customer</p>
-                                        <p>
-                                            <a href="mailto:user@gmail.com" target="_blank" rel="noopener noreferrer">
-                                                user@gmail.com
-                                            </a>
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div> */}
                     </div>
-
+                    
 
                     {/* Pagination */}
                     <nav className="float-end mt-4" aria-label="page navigation">
@@ -133,6 +117,7 @@ const UserMain = () => {
                     </nav>
                 </div>
             </div>
+
         </section >
     );
 };
