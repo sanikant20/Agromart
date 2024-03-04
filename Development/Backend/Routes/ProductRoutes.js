@@ -29,10 +29,9 @@ router.put('/products/:id', upload.single('image'), async (req, resp) => {
         // Check if there is a file uploaded
         if (req.file) {
             // Convert the image to base64
-            const imageBuffer = fs.readFileSync(req.file.path);
             image = {
-                data: imageBuffer.toString('base64'),
-                contentType: req.file.mimetype
+                data: fs.readFileSync("imageFile/productImage/" + req.file.filename),
+                contentType: "image/png"
             };
             // Delete the uploaded file after converting to base64
             fs.unlinkSync(req.file.path);
