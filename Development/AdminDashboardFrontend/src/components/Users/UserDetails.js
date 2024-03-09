@@ -2,12 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 const UserDetail = () => {
-
     const [users, setUsers] = useState([]);
     const params = useParams()
 
     useEffect(() => {
-
         const getUsers = async () => {
             try {
                 let response = await fetch(`http://localhost:5000/api/userData/${params.id}`);
@@ -15,18 +13,13 @@ const UserDetail = () => {
                 if (!response.ok) {
                     throw new Error("Error while fetching users data")
                 }
-
                 const result = await response.json();
                 setUsers(result);
-
             } catch (error) {
                 console.error("Error in fetching users data.")
             }
-
         }
-
         getUsers();
-
     }, [params.id])
 
     return (
@@ -54,6 +47,7 @@ const UserDetail = () => {
                                             className="form-control"
                                             id="admin_name"
                                             value={users.name}
+                                            style={{textAlign: 'left'}}
                                         // onChange={(e) => setName(e.target.value)}
                                         // readOnly
                                         />
@@ -71,6 +65,7 @@ const UserDetail = () => {
                                             value={users.role}
                                             // onChange={(e) => setRole(e.target.value)}
                                             readOnly
+                                            style={{textAlign: 'left'}}
                                         />
                                     </div>
 
@@ -85,6 +80,8 @@ const UserDetail = () => {
                                             id="address"
                                             value={users.location}
                                         // onChange={(e) => setLocation(e.target.value)}
+                                        style={{textAlign: 'left'}}
+
                                         />
                                     </div>
 
@@ -99,23 +96,27 @@ const UserDetail = () => {
                                             id="email"
                                             value={users.email}
                                         // onChange={(e) => setEmail(e.target.value)}
+                                        style={{textAlign: 'left'}}
+
                                         />
                                     </div>
 
-
+{/* 
                                     <div className="mb-3">
                                         <label htmlFor="profile_image" className="form-label">
-                                            Image URL
+                                            Image
                                         </label>
                                         <input
-                                            type="text"
-                                            placeholder="Enter Image URL"
+                                            type="file"
+                                            placeholder="Select Profile Image "
                                             className="form-control"
                                             id="profile_image"
                                             value={users.image}
                                         // onChange={(e) => setImage(e.target.value)}
+                                        style={{textAlign: 'left'}}
+
                                         />
-                                    </div>
+                                    </div> */}
                                     <Link to={`/users/`} className="btn btn-danger text-white">
                                         Go Back
                                     </Link>

@@ -24,7 +24,7 @@ const upload = multer({ storage: storage })
 // API to update product details : ADMIN
 router.put('/products/:id', upload.single('image'), async (req, resp) => {
     try {
-        let image = ''; // Initialize image variable
+        let image = '';
 
         // Check if there is a file uploaded
         if (req.file) {
@@ -59,7 +59,13 @@ router.put('/products/:id', upload.single('image'), async (req, resp) => {
 
 // API to add new products with image
 router.post("/addProductsWithImages", upload.single('productImage'), async (req, resp) => {
-    try {       
+    try {
+        const imagePath = 'imageFile/productImage/' + req.file.filename;
+        const image = {
+            data: fs.readFileSync(imagePath),
+            contentType: "image/png"
+        };
+
         let product = new Product({
             category: req.body.category,
             name: req.body.name,
@@ -67,10 +73,8 @@ router.post("/addProductsWithImages", upload.single('productImage'), async (req,
             quantity: req.body.quantity,
             weight: req.body.weight,
             description: req.body.description,
-            image: {
-                data: fs.readFileSync("imageFile/productImage/" + req.file.filename),
-                contentType: "image/png"
-            },
+            image: image
+
         });
         let result = await product.save();
         console.log("Image is saved.");

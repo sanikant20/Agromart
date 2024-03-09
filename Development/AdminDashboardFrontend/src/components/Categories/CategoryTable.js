@@ -39,7 +39,6 @@ const CategoryTable = () => {
             result = await result.json();
 
             if (result) {
-                window.alert("Category deleted successfully.");
                 window.location.reload();
             } else {
                 console.error("Error while deleting product");
@@ -60,9 +59,9 @@ const CategoryTable = () => {
             <table className="table">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Description</th>
+                        <th>Category ID</th>
+                        <th>Category Name</th>
+                        <th>Category Description</th>
                         <th className="text-end">Action</th>
                     </tr>
                 </thead>

@@ -8,7 +8,7 @@ const AddProductMain = () => {
   const [quantity, setQuantity] = useState('');
   const [weight, setWeight] = useState('');
   const [description, setDescription] = useState('');
-  const [image, setImage] = useState(null); 
+  const [image, setImage] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState('');
@@ -27,7 +27,7 @@ const AddProductMain = () => {
       formData.append('quantity', quantity);
       formData.append('weight', weight);
       formData.append('description', description);
-      formData.append('productImage', image); 
+      formData.append('productImage', image);
 
       const result = await fetch("http://localhost:5000/api/addProductsWithImages", {
         method: "POST",
@@ -114,6 +114,7 @@ const AddProductMain = () => {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required
+                      style={{ textAlign: 'left' }}
                     />
                     {error && !name && <div style={{ color: 'red' }}>Enter Product name</div>}
                   </div>
@@ -123,6 +124,7 @@ const AddProductMain = () => {
                       Price
                     </label>
                     <input
+                      style={{ textAlign: 'left' }}
                       type="number"
                       placeholder="Type here"
                       className="form-control"
@@ -146,6 +148,7 @@ const AddProductMain = () => {
                       Quantity
                     </label>
                     <input
+                      style={{ textAlign: 'left' }}
                       type="number"
                       placeholder="Type here"
                       className="form-control"
@@ -169,6 +172,7 @@ const AddProductMain = () => {
                       Weight
                     </label>
                     <input
+                      style={{ textAlign: 'left' }}
                       type="text"
                       placeholder="Type here"
                       className="form-control"
@@ -206,7 +210,7 @@ const AddProductMain = () => {
                       className="form-control"
                       name="product_image"
                       id="product_image"
-                      onChange={handleImageChange} 
+                      onChange={handleImageChange}
                     />
                     {error && !image && <div style={{ color: 'red' }}>Insert image</div>}
                   </div>

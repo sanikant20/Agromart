@@ -10,7 +10,7 @@ const Categories = require('../Models/Categories');
 router.post('/addCategory', async (req, resp) => {
     try {
         // Check all field are present or not
-        const requiredFields = ['categoryName', 'categoryImage', 'description'];
+        const requiredFields = ['categoryName', 'description'];
         const missingFields = requiredFields.filter(field => !req.body.hasOwnProperty(field));
 
         if (missingFields.length > 0) {
@@ -52,7 +52,7 @@ router.get("/category/:id", async (req, resp) => {
         if (result) {
             resp.status(200).send(result)
         } else {
-            resp.status(404).send({ result: "No product details." })
+            resp.status(404).send({ result: "No Category details." })
         }
     } catch (error) {
         console.error("Error in getting category detail.");

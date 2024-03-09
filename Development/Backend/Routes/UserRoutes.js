@@ -6,8 +6,6 @@ app.use(express.json());
 const router = express.Router();
 
 
-
-
 // API to get all users from database and list users in card AdminDashboard
 router.get('/users', async (req, resp) => {
     try {
@@ -66,7 +64,7 @@ router.put("/editProfile/:id", async (req, resp) => {
 })
 
 
-// API to get data for profile
+// API to get User data for profile
 router.get('/userData/:id', async (req, resp) => {
     
     try {

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 const CreateCategory = () => {
     const [categoryName, setCategoryName] = useState('');
-    const [categoryImage, setImage] = useState('');
+    // const [categoryImage, setImage] = useState('');
     const [description, setDescription] = useState('');
     const [error, setError] = useState(false);
 
@@ -10,7 +10,7 @@ const CreateCategory = () => {
     const addCategory = async (e) => {
         e.preventDefault();
 
-        if (!categoryName || !categoryImage || !description) {
+        if (!categoryName || !description) {
             setError(true);
             return;
         }
@@ -18,7 +18,7 @@ const CreateCategory = () => {
         try {
             const result = await fetch("http://localhost:5000/api/addCategory", {
                 method: "POST",
-                body: JSON.stringify({ categoryName, categoryImage ,description }),
+                body: JSON.stringify({ categoryName ,description }),
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -31,7 +31,7 @@ const CreateCategory = () => {
 
             // Reset the form and error state after successful submission
             setCategoryName('');
-            setImage('');
+            // setImage('');
             setDescription('');
             setError(false);
 
@@ -45,7 +45,7 @@ const CreateCategory = () => {
             <form>
                 <div className="mb-4">
                     <label htmlFor="product_name" className="form-label">
-                        Name
+                        Category Name
                     </label>
                     <input 
                         type="text"
@@ -54,11 +54,12 @@ const CreateCategory = () => {
                         id="product_name"
                         value={categoryName}
                         onChange={(e) => setCategoryName(e.target.value)}
+                        style={{textAlign: 'left'}}
                     />
                     {error && !categoryName && <div style={{ color: 'red' }}>Enter Category Name</div>}
                 </div>
 
-                <div className="mb-4">
+                {/* <div className="mb-4">
                     <label className="form-label">Image</label>
                     <input 
                         type="file"
@@ -67,7 +68,7 @@ const CreateCategory = () => {
                         onChange={(e) => setImage(e.target.value)}
                     />
                     {error && !categoryImage && <div style={{ color: 'red' }}>Enter Category Name</div>}
-                </div>
+                </div> */}
 
                 <div className="mb-4">
                     <label className="form-label">Description</label>

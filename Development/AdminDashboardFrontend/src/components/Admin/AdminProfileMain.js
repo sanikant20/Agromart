@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 
 const AdminProfileMain = () => {
     const [user, setUser] = useState('');
-    const [userImage, setUserImage] = useState(null);
+    // const [userImage, setUserImage] = useState(null);
 
     const params = useParams();
 
@@ -18,11 +18,9 @@ const AdminProfileMain = () => {
                 if (!response.ok) {
                     throw new Error("Error while fetching user data");
                 }
-
                 const userData = await response.json();
                 setUser(userData)
-                setUserImage(userData.userImage);
-
+                // setUserImage(userData.userImage);
             } catch (error) {
                 console.error("Error fetching user profile data:", error.message);
             }
@@ -30,14 +28,7 @@ const AdminProfileMain = () => {
         fetchUserProfileData();
     }, [params.id]);
 
-    const getImageSource = () => {
-        if (userImage && userImage.userImage && userImage.userImage.data) {
-            const uint8Array = new Uint8Array(userImage.userImage.data);
-            const base64Data = btoa(String.fromCharCode.apply(null, uint8Array));
-            return `data:${userImage.userImage.contentType};base64,${base64Data}`;
-        }
-        return null;
-    };
+
 
     return (
         <div>
@@ -49,11 +40,11 @@ const AdminProfileMain = () => {
                         </div>
                     </div>
                     <div className="row">
-                        {/* Profile image */}
+                        {/* Profile image
                         <div className="col-md-12 mb-4">
                             {userImage && userImage.userImage ? (
                                 <img
-                                    src={getImageSource()}
+                                    // src={getImageSource()}
                                     alt="User Profile"
                                     className="img-fluid rounded-circle"
                                     style={{ maxWidth: '150px' }}
@@ -61,7 +52,7 @@ const AdminProfileMain = () => {
                             ) : (
                                 <span>No profile image available</span>
                             )}
-                        </div>
+                        </div> */}
                         {/* Admin Information */}
                         <div className="row mt-4">
                             <div className="col-xl-8 col-lg-8">
@@ -75,6 +66,8 @@ const AdminProfileMain = () => {
                                                 id="name"
                                                 defaultValue={user.name}
                                                 readOnly
+                                                style={{ textAlign: 'left' }}
+
                                             />
                                         </div>
                                         <div className="mb-3">
@@ -85,6 +78,8 @@ const AdminProfileMain = () => {
                                                 id="address"
                                                 defaultValue={user.location}
                                                 readOnly
+                                                style={{ textAlign: 'left' }}
+
                                             />
                                         </div>
                                         <div className="mb-3">
@@ -95,6 +90,8 @@ const AdminProfileMain = () => {
                                                 id="email"
                                                 defaultValue={user.email}
                                                 readOnly
+                                                style={{ textAlign: 'left' }}
+
                                             />
                                         </div>
                                         <div>

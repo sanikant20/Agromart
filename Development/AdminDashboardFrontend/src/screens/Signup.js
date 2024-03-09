@@ -8,7 +8,7 @@ const SignupForm = () => {
     const [location, setLocation] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [userImage, setUserImage] = useState(null);
+    // const [userImage, setUserImage] = useState(null);
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
@@ -54,10 +54,10 @@ const SignupForm = () => {
 
         // Create new user
         try {
-            console.log(name, role, location, email, password, userImage);
+            console.log(name, role, location, email, password);
             setError('');
 
-            if (!name || !role || !location || !email || !password || !userImage) {
+            if (!name || !role || !location || !email || !password) {
                 setError('Please provide all details.');
                 return;
             }
@@ -65,7 +65,7 @@ const SignupForm = () => {
             // Fetching the server with a POST request for signup
             let result = await fetch('http://localhost:5000/api/register', {
                 method: 'POST',
-                body: JSON.stringify({ name, role, location, email, password, userImage }),
+                body: JSON.stringify({ name, role, location, email, password }),
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -122,13 +122,13 @@ const SignupForm = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
-                        <input
+                        {/* <input
                             type="file"
                             placeholder="Profile Image"
                             name="userImage"
                             value={userImage}
                             onChange={(e) => setUserImage(e.target.value)}
-                        />
+                        /> */}
 
                         <div>
                             <label>Choose your role:</label>

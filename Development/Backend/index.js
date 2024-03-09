@@ -14,7 +14,8 @@ app.use("/api", require("./Routes/UserRoutes"));
 app.use("/api", require("./Routes/Categories"));
 app.use("/api", require("./Routes/ChangePasswordRoute"));
 app.use("/api", require("./Routes/ImageRoutes"));
-app.use("/api", require("./Routes/CartProducts"));
+app.use("/api", require("./Routes/CartRoutes"));
+app.use("/api", require("./Routes/OrderRoutes"));
 
 
 // Port to run server

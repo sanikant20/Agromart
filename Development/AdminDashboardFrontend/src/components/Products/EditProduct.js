@@ -84,7 +84,7 @@ const EditProduct = () => {
 
     return (
         <div>
-            <section className="content-main" style={{ maxWidth: "1200px" }}>
+            <section className="content-main" style={{ maxWidth: "800px" }}>
                 <form>
                     <div className="content-header d-flex justify-content-between align-items-center">
                         <h2 className="content-title">Update Product</h2>
@@ -105,6 +105,8 @@ const EditProduct = () => {
                                             id="product_category"
                                             defaultValue={category}
                                             onChange={(e) => setCategory(e.target.value)}
+                                            readOnly
+                                            style={{textAlign: 'left'}}
                                         />
                                     </div>
 
@@ -119,6 +121,7 @@ const EditProduct = () => {
                                             id="product_name"
                                             defaultValue={name}
                                             onChange={(e) => setName(e.target.value)}
+                                            style={{textAlign: 'left'}}
                                         />
                                     </div>
 
@@ -133,6 +136,7 @@ const EditProduct = () => {
                                             id="product_price"
                                             defaultValue={price}
                                             onChange={(e) => setPrice(e.target.value)}
+                                            style={{textAlign: 'left'}}
                                         />
                                     </div>
 
@@ -147,6 +151,7 @@ const EditProduct = () => {
                                             id="product_quantity"
                                             defaultValue={quantity}
                                             onChange={(e) => setQuantity(e.target.value)}
+                                            style={{textAlign: 'left'}}
                                         />
                                     </div>
 
@@ -161,6 +166,7 @@ const EditProduct = () => {
                                             id="product_weight"
                                             defaultValue={weight}
                                             onChange={(e) => setWeight(e.target.value)}
+                                            style={{textAlign: 'left'}}
                                         />
                                     </div>
 

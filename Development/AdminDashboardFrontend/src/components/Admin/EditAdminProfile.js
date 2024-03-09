@@ -6,7 +6,7 @@ const EditAdminProfile = () => {
     const [location, setLocation] = useState('')
     const [role, setRole] = useState('')
     const [email, setEmail] = useState('')
-    const [image, setImage] = useState('')
+    // const [image, setImage] = useState('')
 
     const params = useParams();
     const navigate = useNavigate();
@@ -29,7 +29,7 @@ const EditAdminProfile = () => {
                 setLocation(data.location);
                 setRole(data.role);
                 setEmail(data.email);
-                setImage(data.image);
+                // setImage(data.image);
 
             } catch (error) {
                 if (error instanceof TypeError) {
@@ -38,10 +38,9 @@ const EditAdminProfile = () => {
                     console.error("Error fetching product details:", error.message);
                 }
             }
-
         }
         adminProfile();
-    }, [])
+    }, [params.id])
 
     // Update the admin details
     const editProfile = async (e) => {
@@ -103,7 +102,9 @@ const EditAdminProfile = () => {
                                             id="admin_name"
                                             value={name}
                                             onChange={(e) => setName(e.target.value)}
-                                        // readOnly
+                                       
+                                        style={{textAlign: 'left'}}
+
                                         />
                                     </div>
 
@@ -119,6 +120,8 @@ const EditAdminProfile = () => {
                                             value={role}
                                             onChange={(e) => setRole(e.target.value)}
                                             readOnly
+                                            style={{textAlign: 'left'}}
+
                                         />
                                     </div>
 
@@ -133,6 +136,8 @@ const EditAdminProfile = () => {
                                             id="address"
                                             value={location}
                                             onChange={(e) => setLocation(e.target.value)}
+                                            style={{textAlign: 'left'}}
+
                                         />
                                     </div>
 
@@ -147,10 +152,12 @@ const EditAdminProfile = () => {
                                             id="email"
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
+                                            style={{textAlign: 'left'}}
+
                                         />
                                     </div>
 
-                                    <div className="mb-3">
+                                    {/* <div className="mb-3">
                                         <label htmlFor="profile_image" className="form-label">
                                             Image URL
                                         </label>
@@ -162,7 +169,7 @@ const EditAdminProfile = () => {
                                             value={image}
                                             onChange={(e) => setImage(e.target.value)}
                                         />
-                                    </div>
+                                    </div> */}
 
                                     <div className="mb-3 d-flex justify-content-between">
                                         <Link to={`/adminProfile/` + userID} className="btn btn-danger text-white">

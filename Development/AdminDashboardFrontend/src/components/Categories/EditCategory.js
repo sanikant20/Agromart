@@ -5,7 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 const EditCategory = () => {
     const [categoryName, setCategoryName] = useState('');
     const [description, setDescription] = useState('');
-    const [categoryImage, setCategoryImage] = useState('');
+    // const [categoryImage, setCategoryImage] = useState('');
 
     const params = useParams();
     const navigate = useNavigate();
@@ -23,7 +23,7 @@ const EditCategory = () => {
 
                 setCategoryName(data.categoryName);
                 setDescription(data.description);
-                setCategoryImage(data.categoryImage);
+                // setCategoryImage(data.categoryImage);
             } catch (error) {
                 if (error instanceof TypeError) {
                     console.error("Network error. Please check your internet connection.", error);
@@ -42,7 +42,7 @@ const EditCategory = () => {
         try {
             const update = await fetch(`http://localhost:5000/api/category/${params.id}`, {
                 method: "PUT",
-                body: JSON.stringify({ categoryName, description, categoryImage }),
+                body: JSON.stringify({ categoryName, description }),
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -93,6 +93,7 @@ const EditCategory = () => {
                                             id="Category_Name"
                                             defaultValue={categoryName}
                                             onChange={(e) => setCategoryName(e.target.value)}
+                                            style={{ textAlign: 'left' }}
                                         />
                                     </div>
 
@@ -108,10 +109,11 @@ const EditCategory = () => {
                                             defaultValue={description}
                                             onChange={(e) => setDescription(e.target.value)}
                                             rows="5"
+                                            style={{ textAlign: 'left' }}
                                         ></textarea>
                                     </div>
 
-                                    <div className="mb-3">
+                                    {/* <div className="mb-3">
                                         <label htmlFor="Category_image" className="form-label">
                                             Image URL
                                         </label>
@@ -131,7 +133,7 @@ const EditCategory = () => {
                                             defaultValue={categoryImage}
                                             onChange={(e) => setCategoryImage(e.target.value)}
                                         />
-                                    </div>
+                                    </div> */}
 
                                     <div className="mb-3 d-flex justify-content-between">
                                         <Link to="/categories" className="btn btn-danger text-white">

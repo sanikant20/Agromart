@@ -107,6 +107,8 @@ const ChangePasswordMain = () => {
                                             id="oldPassword"
                                             value={oldPassword}
                                             onChange={(e) => setOldPassword(e.target.value)}
+                                            style={{ textAlign: 'left' }}
+
                                         />
                                     </div>
 
@@ -121,6 +123,8 @@ const ChangePasswordMain = () => {
                                             id="new_password"
                                             value={newPassword}
                                             onChange={(e) => setNewPassword(e.target.value)}
+                                            style={{ textAlign: 'left' }}
+
                                         />
                                     </div>
 
@@ -135,6 +139,8 @@ const ChangePasswordMain = () => {
                                             id="confirm_password"
                                             value={confirmPassword}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
+                                            style={{ textAlign: 'left' }}
+
                                         />
                                     </div>
 
