@@ -6,34 +6,34 @@ import { StatusBar } from 'react-native';
 import LoginScreen from './src/Screens/LoginScreen';
 import RegisterScreen from './src/Screens/RegisterScreen';
 import HomeScreen from './src/Screens/HomeScreen';
-import SingleProduct from './src/Screens/SingleProduct'
-import CartScreen from './src/Screens/CartScreen'
-import ProfileScreen from './src/Screens/ProfileScreen'
-import ShippingScreen from './src/Screens/ShippingScreen';
-import PaymentScreen from './src/Screens/PaymentScreen';
-import OrderScreen from './src/Screens/OrderScreen';
 import NavMenu from './src/Navigation/NavMenu';
-
+import SingleProductScreen from './src/Screens/SingleProductScreen';
+import { CartProvider } from './src/Screens/CartReducer';
+import CartScreen from './src/Screens/CartScreen';
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <NativeBaseProvider>
-      <NavigationContainer>
-        <StatusBar hidden />
-        <Stack.Navigator
-          initialRouteName="Login"
-          screenOptions={{
-            headerShown: false,
-          }}>
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="SignUp" component={RegisterScreen} />
-          <Stack.Screen name="Home" component={HomeScreen} />
-          <Stack.Screen name="Menu" component={NavMenu} />
-        </Stack.Navigator>
-      </NavigationContainer>
-
-    </NativeBaseProvider>
+    <CartProvider>
+      <NativeBaseProvider>
+        <NavigationContainer>
+          <StatusBar hidden={false} />
+          <Stack.Navigator
+            initialRouteName="Login"
+            screenOptions={{
+              headerShown: false,
+            }}>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="SignUp" component={RegisterScreen} />
+            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Menu" component={NavMenu} />
+            <Stack.Screen name="Single" component={SingleProductScreen} />
+            <Stack.Screen name="Cart" component={CartScreen} />
+            
+          </Stack.Navigator>
+        </NavigationContainer>
+      </NativeBaseProvider>
+    </CartProvider>
   );
 }

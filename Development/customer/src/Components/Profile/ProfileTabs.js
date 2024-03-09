@@ -5,8 +5,16 @@ import Profile from './Profile';
 import Orders from './Orders';
 import Colors from '../../colors';
 
+// const renderScene = SceneMap({
+//     first: (props) => <Profile {...props} _id={props.route.params._id} />,
+//     second: Orders
+//   });
+  
 const renderScene = SceneMap({
-    first: Profile,
+    first: (props) => {
+        const _id = props.route?.params?._id;
+        return <Profile {...props} _id={_id} />;
+    },
     second: Orders
 });
 

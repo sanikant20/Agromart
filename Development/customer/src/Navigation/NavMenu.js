@@ -1,12 +1,15 @@
-import { View, Text, StyleSheet } from 'react-native'
-import React from 'react'
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Center, Pressable } from 'native-base';
-import { AntDesign, Entypo, FontAwesome, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
+import { AntDesign, Entypo, FontAwesome, FontAwesome5, MaterialCommunityIcons } from 'react-native-vector-icons'; 
+import { StyleSheet } from 'react-native'; 
 import Colors from '../colors';
 import ProfileScreen from '../Screens/ProfileScreen';
 import CartScreen from '../Screens/CartScreen';
 import StackNav from './StackNav';
+
+
+const Tab = createBottomTabNavigator();
 
 const CustomTab = ({ children, onPress }) => (
     <Pressable
@@ -20,14 +23,13 @@ const CustomTab = ({ children, onPress }) => (
     >
         {children}
     </Pressable>
-); 
-const Tab = createBottomTabNavigator();
+);
 
 const NavMenu = () => {
     return (
         <Tab.Navigator
-            backBehavior="Main"
-            initialRouteName='main'
+            backBehavior='main'
+            initialRouteName='Main'
             screenOptions={{
                 tabBarShowLabel: false,
                 tabBarStyle: { ...styles.tab },
@@ -37,7 +39,7 @@ const NavMenu = () => {
         >
             {/* Home */}
             <Tab.Screen
-                name='main'
+                name='Main'
                 component={StackNav}
                 options={{
                     tabBarIcon: ({ focused }) => (
@@ -69,7 +71,6 @@ const NavMenu = () => {
                                 ) :
                                     (
                                         <MaterialCommunityIcons name='shopping-outline' size={24} color={Colors.white} />
-
                                     )
                             }
                         </Center>
@@ -98,14 +99,14 @@ const NavMenu = () => {
             />
         </Tab.Navigator>
     )
-}
+};
 
 const styles = StyleSheet.create({
     tab: {
         elevation: 0,
         backgroundColor: Colors.white,
         height: 60,
-        //paddingTop: 5
     },
 });
-export default NavMenu
+
+export default NavMenu;

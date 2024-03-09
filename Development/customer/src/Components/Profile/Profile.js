@@ -2,38 +2,33 @@ import React, { useState, useEffect } from 'react';
 import { Box, FormControl, ScrollView, Input, VStack, View, Text } from 'native-base';
 import Colors from '../../colors';
 import Buttone from '../Buttone';
-import { ActivityIndicator } from 'react-native';
-import { useRoute } from '@react-navigation/native';
-
 
 const Inputs = [
   {
-    label: "Username",
-    key: "username"
+    label: "name",
+    key: "name"
   },
   {
-    label: "Address",
-    key: "address"
+    label: "location",
+    key: "location"
   },
   {
-    label: "Email",
+    label: "email",
     key: "email"
   },
   {
-    label: "Password",
+    label: "password",
     key: "password"
   },
 ];
 
-const Profile = () => {
-  const route = useRoute();
-  // Check if route and route.params are defined before accessing userId
-  const userId = route && route.params ? route.params.userId : null;
+const Profile = ({ route }) => {
+  const userId = route?.params?.userId;
 
   console.log("Hello", userId);
 
   const [userData, setUserData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -52,7 +47,7 @@ const Profile = () => {
         setLoading(false);
       } catch (error) {
         console.error('Error fetching user data:', error.message);
-        setLoading(false);
+        // setLoading(false);
       }
     };
 
@@ -62,13 +57,18 @@ const Profile = () => {
     }
   }, [userId]);
 
+  // if (loading) {
+  //   return (
+  //     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+  //       <Text>Loading...</Text>
+  //     </View>
+  //   );
+  // }
 
-
-
-  if (!userData) {
+  if (!userId) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>User data not found</Text>
+        <Text>User ID is not provided</Text>
       </View>
     );
   }

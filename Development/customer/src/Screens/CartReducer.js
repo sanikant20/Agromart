@@ -27,11 +27,11 @@ const cartReducer = (state, action) => {
           img: action.img
         }
       ];
-      
+
     case REMOVE_FROM_CART:
       return state.filter((item, index) => index !== action.index);
-    
-      case UPDATE_CART_ITEM:
+
+    case UPDATE_CART_ITEM:
       return state.map(item => {
         if (item.id === action.id) {
           return {
@@ -42,8 +42,8 @@ const cartReducer = (state, action) => {
         }
         return item;
       });
-    
-      case CLEAR_CART:
+
+    case CLEAR_CART:
       return [];
     default:
       console.error("Error in reducer");

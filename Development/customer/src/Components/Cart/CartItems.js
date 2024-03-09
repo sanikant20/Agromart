@@ -1,301 +1,350 @@
-// import { Center, HStack, Pressable, Image, VStack, Text, Button } from 'native-base';
-// import React from 'react';
-// import { Box } from 'native-base';
-// import { SwipeListView } from 'react-native-swipe-list-view';
-// import Products from '../../Data/Products';
-// import Colors from '../../colors';
-// import { FontAwesome } from '@expo/vector-icons';
-// import Buttone from '../Buttone';
-// import { useCart, } from '../../Screens/CartReducer';
-// import CartEmpty from './CartEmpty';
-
-// const Swiper = () => (
-//     <SwipeListView
-//         rightOpenValue={-50}
-//         previewRowKey="0"
-//         previewOpenValue={-40}
-//         previewOpenDelay={3000}
-//         data={data.map}
-//         renderItem={renderItems}
-//         renderHiddenItem={HiddenItems}
-//         showsVerticalScrollIndicator={false}
-//     />
-// );
-
-// // Render Items
-// const renderItems = (data) => (
-//     <Pressable>
-//         <Box ml={6} mb={3}>
-//             <HStack alignItems="center" bg={Colors.white} shadow={1} rounded={10} overflow="hidden">
-//                 <Center w="25%" bg={Colors.deepGray}>
-//                     <Image
-//                         source={{ uri: data.item.image }}
-//                         alt={data.item.name}
-//                         w="full"
-//                         h={24}
-//                         resizeMode="contain"
-//                     />
-//                 </Center>
-//                 <VStack w="60%" px={2} space={2}>
-//                     <Text isTruncated color={Colors.black} bold fontSize={10}>
-//                         {data.item.name}
-//                     </Text>
-//                     <Text color={Colors.lightBlack}>NPR {data.item.price}</Text>
-//                 </VStack>
-//                 <Center>
-//                     <Button bg={Colors.main}
-//                         _pressed={{ bg: Colors.main }}
-//                         _text={bg = Colors.white}
-//                     >5</Button>
-//                 </Center>
-//             </HStack>
-//         </Box>
-//     </Pressable>
-// );
-
-// // Render Hidden items
-// const HiddenItems = (data) => (
-//     <Pressable w={50} roundedTopRight={10} roundedBottomLeft={10} h="88%" ml="auto" justifyContent="center" bg={Colors.red}>
-//         <Center alignItems="center" space={2}>
-//             <FontAwesome name='trash' size={24} color={Colors.white} />
-//         </Center>
-//     </Pressable>
-// );
-
-// const CartItems = () => {
-//     let data = useCart();
-//     const { dispatch } = useCart();
-
-//     if (data.length === 0) {
-//         return (
-//             <CartEmpty />
-//         )
-//     };
-
-//     const handleCheckOut = async () => {
-//         try {
-//             // Send POST request to checkout
-//             const response = await fetch('http://:5000/api/orderData', {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                 },
-//                 body: JSON.stringify({ cartData }),
-//             });
-//             if (!response.ok) {
-//                 throw new Error('Failed to checkout');
-//             }
-//             console.log("JSON RESPONSE:::::", response.status)
-//             if (response.status === 200) {
-//                 dispatch({ type: "CLEAR_CART" })
-//             }
-//             // Clear cart data after successful checkout
-//             // setCartData([]);
-
-//             alert('Checkout successful');
-//         } catch (error) {
-//             console.error('Error during checkout:', error.message);
-//         }
-//     };
-//     let totalPrice = data.reduce((total, food) => total + food.price, 0)
-
-//     return (
-//         <Box mr={6}>
-//             <Swiper />
-
-//             {/* Total price */}
-//             <Center mt={5}>
-//                 <HStack rounded={50}
-//                     justifyContent="space-between"
-//                     bg={Colors.white}
-//                     shadow={2}
-//                     w="90%"
-//                     pl={5}
-//                     h={45}
-//                     alignItems="center"
-//                 >
-//                     <Text>Total:</Text>
-//                     <Button px={10}
-//                         h={45}
-//                         rounded={50}
-//                         bg={Colors.main}
-//                         _text={{
-//                             color: Colors.white,
-//                             fontWeight: "semibold"
-//                         }}
-//                         _pressed={{
-//                             bg: Colors.main
-//                         }}
-//                     >
-//                         NPR {totalPrice}
-//                     </Button>
-//                 </HStack>
-//             </Center>
-
-//             {/* Checkout button */}
-//             <Center px={5} mb={3}>
-//                 <Buttone onPress={handleCheckOut} bg={Colors.main} color={Colors.white} mt={10}>
-//                     Checkout
-//                 </Buttone>
-//             </Center>
-//         </Box>
-//     );
-// };
-
-
-// export default CartItems;
-
-import React, { useEffect } from 'react';
-import { Box, Center, HStack, Text, Button, Pressable, Image, VStack } from 'native-base';
+import React, { useEffect, useState } from 'react';
+import { FlatList, TouchableOpacity, Image, VStack, Text, Box, HStack, Center } from 'native-base';
 import { SwipeListView } from 'react-native-swipe-list-view';
 import Colors from '../../colors';
 import { FontAwesome } from '@expo/vector-icons';
 import Buttone from '../Buttone';
-import { useCart, useDispatchCart } from '../../Screens/CartReducer'; // Import useCart and useDispatchCart hooks
 import CartEmpty from './CartEmpty';
+import { Buffer } from 'buffer';
 
 const Swiper = () => {
-  const data = useCart(); 
-//   const dispatch = useCart();
+    const [cart, setCart] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-  return (
-    <SwipeListView
-      rightOpenValue={-50}
-      previewRowKey="0"
-      previewOpenValue={-40}
-      previewOpenDelay={3000}
-      data={data} 
-      renderItem={renderItems}
-      renderHiddenItem={HiddenItems}
-      showsVerticalScrollIndicator={false}
-    />
-  );
-};
+    useEffect(() => {
+        const getCartProducts = async () => {
+            try {
+                let response = await fetch('http://192.168.1.77:5000/api/CartData');
+                if (!response.ok) {
+                    throw new Error("Error while fetching products data");
+                }
+                const result = await response.json();
+                setCart(result);
+                setLoading(false);
+            } catch (error) {
+                console.error('Error fetching cart products:', error.message);
+                setError(error.message);
+                setLoading(false);
+            }
+        };
+        getCartProducts();
+    }, []);
 
-// Render Items
-const renderItems = (data) => (
-  <Pressable>
-    <Box ml={6} mb={3}>
-      <HStack alignItems="center" bg={Colors.white} shadow={1} rounded={10} overflow="hidden">
-        <Center w="25%" bg={Colors.deepGray}>
-          <Image
-            source={{ uri: data.item.image }}
-            alt={data.item.name}
-            w="full"
-            h={24}
-            resizeMode="contain"
-          />
-        </Center>
-        <VStack w="60%" px={2} space={2}>
-          <Text isTruncated color={Colors.black} bold fontSize={10}>
-            {data.item.name}
-          </Text>
-          <Text color={Colors.lightBlack}>NPR {data.item.price}</Text>
-        </VStack>
-        <Center>
-          <Button bg={Colors.main} _pressed={{ bg: Colors.main }} _text={bg = Colors.white}>
-            {data.item.quantity}
-          </Button>
-        </Center>
-      </HStack>
-    </Box>
-  </Pressable>
-);
-
-// Render Hidden items
-const HiddenItems = (data) => (
-  <Pressable w={50} roundedTopRight={10} roundedBottomLeft={10} h="88%" ml="auto" justifyContent="center" bg={Colors.red}>
-    <Center alignItems="center" space={2}>
-      <FontAwesome name='trash' size={24} color={Colors.white} />
-    </Center>
-  </Pressable>
-);
-
-const CartItems = () => {
-  const data = useCart(); 
-  const dispatch = useDispatchCart();
-
-  useEffect(() => {
-    // Calculate total price whenever cart data changes
-    const totalPrice = data.reduce((total, food) => total + food.price, 0);
-  }, [data]);
-
-  const handleCheckOut = async () => {
-    try {
-      // Send POST request to checkout
-      const response = await fetch('http://192.168.56.1:5000/api/orderData', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ cartData: data }), // Use cart data
-      });
-      if (!response.ok) {
-        throw new Error('Failed to checkout');
-      }
-      console.log("JSON RESPONSE:::::", response.status)
-      if (response.status === 200) {
-        dispatch({ type: "CLEAR_CART" })
-      }
-      // Clear cart data after successful checkout
-      // setCartData([]);
-
-      alert('Checkout successful');
-    } catch (error) {
-      console.error('Error during checkout:', error.message);
+    const bufferToBase64 = (buffer) => {
+        return Buffer.from(buffer).toString('base64');
+    };
+    
+    console.log("CartData: ", cart)
+    if (cart.length === 0) {
+        return <CartEmpty />;
     }
-  };
 
-  // Calculate total price
-  const totalPrice = data.reduce((total, food) => total + food.price, 0);
+    const renderItems = () => {
+        return cart.map((item) => {
+            return (
+                <TouchableOpacity key={item._id}>
+                    <Box ml={6} mb={3}>
+                        <HStack alignItems="center" bg={Colors.white} shadow={1} rounded={10} overflow="hidden">
+                            <Center w="25%" bg={Colors.deepGray}>
+                                {item.image && item.image.data && (
+                                    <Image
+                                        source={{ uri: `data:image/png;base64,${bufferToBase64(item.image.data)}` }}
+                                        accessibilityLabel={item.name}
+                                        alt={item.name}
+                                        w="full"
+                                        h={24}
+                                        resizeMode="contain"
+                                        onError={(error) => console.log(`Image load error: ${error.nativeEvent.error}`)}
+                                    />
+                                )}
+                            </Center>
+                            <VStack w="60%" px={2} space={2}>
+                                <Text isTruncated color={Colors.black} bold fontSize={10}>
+                                    {item.name}
+                                </Text>
+                                <Text color={Colors.lightBlack}>NPR {item.price}</Text>
+                            </VStack>
+                            <Center>
+                                <Buttone bg={Colors.main} _pressed={{ bg: Colors.main }} _text={{ color: Colors.white }}>
+                                    {item.quantity}
+                                </Buttone>
+                            </Center>
+                        </HStack>
+                    </Box>
+                </TouchableOpacity>
+            );
+        });
+    };
 
-  if (data.length === 0) {
+    const renderHiddenItem = () => (
+        <TouchableOpacity w={50} roundedTopRight={10} roundedBottomLeft={10} h="88%" ml="auto" justifyContent="center" bg={Colors.red}>
+            <Center alignItems="center" space={2}>
+                <FontAwesome name='trash' size={24} color={Colors.white} />
+            </Center>
+        </TouchableOpacity>
+    );
+
     return (
-      <CartEmpty />
-    )
-  };
-
-  return (
-    <Box mr={6}>
-      <Swiper />
-
-      {/* Total price */}
-      <Center mt={5}>
-        <HStack rounded={50}
-          justifyContent="space-between"
-          bg={Colors.white}
-          shadow={2}
-          w="90%"
-          pl={5}
-          h={45}
-          alignItems="center"
-        >
-          <Text>Total:</Text>
-          <Button px={10}
-            h={45}
-            rounded={50}
-            bg={Colors.main}
-            _text={{
-              color: Colors.white,
-              fontWeight: "semibold"
-            }}
-            _pressed={{
-              bg: Colors.main
-            }}
-          >
-            NPR {totalPrice}
-          </Button>
-        </HStack>
-      </Center>
-
-      {/* Checkout button */}
-      <Center px={5} mb={3}>
-        <Buttone onPress={handleCheckOut} bg={Colors.main} color={Colors.white} mt={10}>
-          Checkout
-        </Buttone>
-      </Center>
-    </Box>
-  );
+        <SwipeListView>
+            <FlatList
+                data={cart}
+                renderItem={renderItems}
+                renderHiddenItem={renderHiddenItem}
+                keyExtractor={(item) => item._id}
+                showsVerticalScrollIndicator={false}
+                scrollEnabled={false}
+            />
+        </SwipeListView>
+    );
 };
 
-export default CartItems;
+export default Swiper;
+
+
+// const CartItems = () => {
+//     const [cart, setCart] = useState([]);
+//     const [loading, setLoading] = useState(true);
+//     const [error, setError] = useState(null);
+
+//     useEffect(() => {
+
+//         const getCartProducts = async () => {
+//             try {
+//                 let response = await fetch('http://192.168.1.77:5000/api/CartData');
+//                 if (!response.ok) {
+//                     throw new Error("Error while fetching products data");
+//                 }
+//                 const result = await response.json();
+//                 setCart(result);
+//                 setLoading(false);
+//             } catch (error) {
+//                 console.error('Error fetching cart products:', error.message);
+//                 setError(error.message);
+//                 setLoading(false);
+//             }
+//         };
+//         getCartProducts();
+//     }, []);
+
+//     const handleCheckOut = async () => {
+//         console.log("Checkout")
+//     };
+
+//     // Function to convert Buffer to base64
+//     const bufferToBase64 = (buffer) => {
+//         return Buffer.from(buffer).toString('base64');
+//     };
+
+//     if (cart.length === 0) {
+//         //         return <CartEmpty />;
+//         //     }
+//         return (
+//             <Box mr={6}>
+//                 {/* <Swiper /> */}
+//                 <Pressable key={item._id}>
+//                     <Box ml={6} mb={3}>
+//                         <HStack alignItems="center" bg={Colors.white} shadow={1} rounded={10} overflow="hidden">
+//                             <Center w="25%" bg={Colors.deepGray}>
+//                                 {item.image && item.image.data && (
+//                                     <Image
+//                                         source={{ uri: `data:image/png;base64,${bufferToBase64(item.image.data)}` }}
+//                                         accessibilityLabel={item.name}
+//                                         alt={item.name}
+//                                         w="full"
+//                                         h={24}
+//                                         resizeMode="contain"
+//                                         onError={(error) => console.log(`Image load error: ${error.nativeEvent.error}`)}
+//                                     />
+//                                 )}
+//                             </Center>
+//                             <VStack w="60%" px={2} space={2}>
+//                                 <Text isTruncated color={Colors.black} bold fontSize={10}>
+//                                     {item.name}
+//                                 </Text>
+//                                 <Text color={Colors.lightBlack}>NPR {item.price}</Text>
+//                             </VStack>
+//                             <Center>
+//                                 <Button bg={Colors.main} _pressed={{ bg: Colors.main }} _text={{ color: Colors.white }}>
+//                                     {item.quantity}
+//                                 </Button>
+//                             </Center>
+//                         </HStack>
+//                     </Box>
+//                 </Pressable>
+
+//                 {/* Total price */}
+//                 <Center mt={5}>
+//                     <HStack rounded={50}
+//                         justifyContent="space-between"
+//                         bg={Colors.white}
+//                         shadow={2}
+//                         w="90%"
+//                         pl={5}
+//                         h={45}
+//                         alignItems="center"
+//                     >
+//                         <Text>Total:</Text>
+//                         <Button px={10}
+//                             h={45}
+//                             rounded={50}
+//                             bg={Colors.main}
+//                             _text={{
+//                                 color: Colors.white,
+//                                 fontWeight: "semibold"
+//                             }}
+//                             _pressed={{
+//                                 bg: Colors.main
+//                             }}
+//                         >
+//                             NPR
+//                             {/* {totalPrice} */}
+//                         </Button>
+//                     </HStack>
+//                 </Center>
+
+//                 {/* Checkout button */}
+//                 <Center px={5} mb={3}>
+//                     <Buttone
+//                         onPress={handleCheckOut}
+//                         bg={Colors.main} color={Colors.white} mt={10}>
+//                         Checkout
+//                     </Buttone>
+//                 </Center>
+//             </Box>
+//         );
+//     };
+// export default CartItems;
+
+
+// import React, { useEffect, useState } from 'react';
+// import { Pressable, Image, Text, Button, View, FlatList } from 'react-native';
+// import Colors from '../../colors';
+// import Buttone from '../Buttone';
+// import CartEmpty from './CartEmpty';
+// import { Box, Center, HStack, VStack } from 'native-base';
+// var Buffer = require('buffer/').Buffer;
+
+// const CartItems = () => {
+//     const [cart, setCart] = useState([]);
+//     const [loading, setLoading] = useState(true);
+//     const [error, setError] = useState(null);
+
+//     useEffect(() => {
+//         const getCartProducts = async () => {
+//             try {
+//                 let response = await fetch('http://192.168.56.1:5000/api/CartData');
+//                 if (!response.ok) {
+//                     throw new Error("Error while fetching products data");
+//                 }
+//                 const result = await response.json();
+//                 setCart(result);
+//                 setLoading(false);
+//             } catch (error) {
+//                 console.error('Error fetching cart products:', error.message);
+//                 setError(error.message);
+//                 setLoading(false);
+//             }
+//         };
+//         getCartProducts();
+//     }, []);
+
+//     const handleCheckOut = async () => {
+//         console.log("Checkout");
+//     };
+
+//     // Function to convert Buffer to base64
+//     const bufferToBase64 = (buffer) => {
+//         return Buffer.from(buffer).toString('base64');
+//     };
+
+//     const renderItem = ({ item }) => (
+//         <Pressable onPress={() => console.log('Item pressed')}>
+//             <Box ml={6} mb={3}>
+//                 <HStack alignItems="center" bg={Colors.white} shadow={1} rounded={10} overflow="hidden">
+//                     <Center w="25%" bg={Colors.deepGray}>
+//                         {item.image && item.image.data && (
+//                             <Image
+//                                 source={{ uri: `data:image/png;base64,${bufferToBase64(item.image.data)}` }}
+//                                 accessibilityLabel={item.name}
+//                                 alt={item.name}
+//                                 w="full"
+//                                 h={24}
+//                                 resizeMode="contain"
+//                                 onError={(error) => console.log(`Image load error: ${error.nativeEvent.error}`)}
+//                             />
+//                         )}
+//                     </Center>
+//                     <VStack w="60%" px={2} space={2}>
+//                         <Text isTruncated color={Colors.black} bold fontSize={10}>{item.name}</Text>
+//                         <Text color={Colors.lightBlack}>NPR {item.price}</Text>
+//                         <Text color={Colors.lightBlack}>NPR {item.quantity}</Text>
+//                     </VStack>
+//                     {/* <Center>
+//                         <Button bg={Colors.main}
+//                             _pressed={{ bg: Colors.main }}
+//                             _text={{ color: Colors.white }}
+//                             title="Press Me"
+//                         >
+//                             {String(item.quantity)}
+//                         </Button>
+
+//                     </Center> */}
+//                 </HStack>
+//             </Box>
+//         </Pressable>
+//     );
+
+//     return (
+//         <Box h='full' bg={Colors.white} pt={5}>
+//             {loading ? (
+//                 <Text>Loading...</Text>
+//             ) : error ? (
+//                 <Text>Error: {error}</Text>
+//             ) : (
+//                 <FlatList
+//                     data={cart}
+//                     renderItem={renderItem}
+//                     keyExtractor={(item, index) => index.toString()}
+//                     // ListEmptyComponent={<CartEmpty />}
+//                     ListFooterComponent={
+//                         <>
+//                             {/* Total price */}
+//                             <Center mt={5}>
+//                                 <HStack rounded={50} justifyContent="space-between" bg={Colors.white} shadow={2} w="90%" pl={5} h={45} alignItems="center">
+//                                     <Text>Total Price:</Text>
+//                                     <Button
+//                                         px={10}
+//                                         h={45}
+//                                         rounded={50}
+//                                         bg={Colors.main}
+//                                         _text={{ color: Colors.white, fontWeight: "semibold" }}
+//                                         _pressed={{ bg: Colors.main }}
+//                                         title='Rs'
+//                                     >
+//                                         {/* {totalPrice} */}
+//                                     </Button>
+//                                 </HStack>
+//                             </Center>
+
+//                             {/* Checkout button */}
+//                             <Center px={5} mb={3}>
+//                                 <Buttone
+//                                     onPress={handleCheckOut}
+//                                     bg={Colors.main}
+//                                     color={Colors.white}
+//                                     mt={10}
+//                                     title='Submit'
+//                                 >
+//                                     Checkout
+//                                 </Buttone>
+//                             </Center>
+//                         </>
+//                     }
+//                 />
+//             )}
+//         </Box>
+//     );
+// };
+
+// export default CartItems;

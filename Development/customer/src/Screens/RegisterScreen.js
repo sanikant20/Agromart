@@ -5,6 +5,8 @@ import { Box, Heading, Input, VStack, Image, Button } from 'native-base';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 function RegisterScreen() {
   const navigation = useNavigation();
@@ -54,21 +56,21 @@ function RegisterScreen() {
       // Fetching the server with a POST request for signup
       let result = await fetch('http://192.168.1.77:5000/api/register', {
         method: 'POST',
-        body: JSON.stringify({ name, role, location, email, password }), // Removed userImage
+        body: JSON.stringify({ name, role, location, email, password }),
         headers: {
           'Content-Type': 'application/json'
         }
       });
-
       result = await result.json();
       console.log(result);
+
+      // await AsyncStorage.setItem("userData", JSON.stringify(result))
       navigation.navigate('Menu');
 
     } catch (error) {
       console.error("Error:", error);
       setError('An error occurred while registering.');
     }
-
   };
 
   const AlreadySignup = () => {

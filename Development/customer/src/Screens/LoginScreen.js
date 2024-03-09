@@ -27,7 +27,6 @@ function LoginScreen() {
           'Content-Type': 'application/json'
         }
       });
-
       const result = await response.json();
       console.log(result);
 
@@ -35,9 +34,7 @@ function LoginScreen() {
         setError('Invalid email, password, or user role with this email.');
         return;
       }
-
       navigation.navigate('Menu');
-
     } catch (error) {
       console.error("Error:", error);
       setError('An error occurred while logging in.');
