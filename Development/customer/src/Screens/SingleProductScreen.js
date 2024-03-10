@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, HStack, Heading, Image, Spacer, Text } from 'native-base';
+import { Box, Button, Center, Flex, HStack, Heading, Image, Spacer, Spinner, Text } from 'native-base';
 import Colors from '../colors';
 import Rating from '../Components/Review/Rating';
 import NumericInput from 'react-native-numeric-input';
 import { Snackbar } from 'react-native-paper';
 import { ScrollView } from 'react-native-virtualized-view';
+import { useNavigation } from '@react-navigation/native';
 var Buffer = require('buffer/').Buffer;
 
 function SingleProductScreen({ route }) {
@@ -13,6 +14,9 @@ function SingleProductScreen({ route }) {
   const [quantity, setQuantity] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [loading, setLoading] = useState(true); // Set loading state
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     const getProductDetails = async () => {
@@ -25,9 +29,12 @@ function SingleProductScreen({ route }) {
         let data = await result.json();
         setProduct(data);
         setTotalPrice(data.price);
-        console.log(data)
+        console.log(data);
+
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching product details:", error.message);
+        setLoading(false);
       }
     };
     getProductDetails();
@@ -69,13 +76,23 @@ function SingleProductScreen({ route }) {
       const data = await response.json();
       console.log(data);
       setSnackbarVisible(true);
+      navigation.navigate('Main');
     } catch (error) {
       console.error('Error adding product to cart:', error);
     }
   };
 
+  if (loading) {
+    return (
+      <Box h="full" bg={Colors.white} px={5} justifyContent="center" alignItems="center">
+        <Spinner size="lg" accessibilityLabel="Loading product data" color={Colors.main} />
+        <Text mt={2}>Loading product data...</Text>
+      </Box>
+    );
+  }
+
   return (
-    <Box safeArea flex={1} bg={Colors.white}>
+    <Box safeArea flex={1} p={3} bg={Colors.white}>
       <ScrollView px={5} showsVerticalScrollIndicator={false}>
         <Image
           source={product.image?.data ?
@@ -87,13 +104,15 @@ function SingleProductScreen({ route }) {
           resizeMode='contain'
         />
         <Heading bold fontSize={15} mb={2} lineHeight={22}>
-          {product.name}
+          Name :
+          <Text>{product.name}</Text>
+
         </Heading>
         <Heading bold fontSize={12} mb={2} lineHeight={17}>
-          {product.weight}
+          Weight : {product.weight}
         </Heading>
         <Heading bold fontSize={12} mb={2} lineHeight={17}>
-          {product.category}
+          Category : {product.category}
         </Heading>
         <Rating value={product.rating} />
 
@@ -115,10 +134,11 @@ function SingleProductScreen({ route }) {
             leftButtonBackgroundColor={Colors.main}
           />
           <Spacer />
-          <Heading color={Colors.black}>NPR: {totalPrice}</Heading>
+          <Heading color={Colors.black}>Rs: {totalPrice}</Heading>
         </HStack>
 
-        <Text lineHeight={24} fontSize={12}>
+        <Text lineHeight={24} fontSize={14}>
+          <Text bold>Description : </Text>
           {product.description}
         </Text>
 

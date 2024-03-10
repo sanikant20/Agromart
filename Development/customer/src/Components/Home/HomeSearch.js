@@ -31,7 +31,6 @@ function HomeSearch() {
               fontSize: 11,
             }}
           >
-            {/* Add text content here */}
             5
           </Text>
         </Box>

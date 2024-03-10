@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Colors from "../colors";
 import { Box, Heading, Input, VStack, Image, Button, Text } from 'native-base';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -34,7 +35,11 @@ function LoginScreen() {
         setError('Invalid email, password, or user role with this email.');
         return;
       }
-      navigation.navigate('Menu');
+
+      // Store user details in AsyncStorage
+      await AsyncStorage.setItem('userDetails', JSON.stringify(result.user));
+  
+      navigation.navigate('Navmenu');
     } catch (error) {
       console.error("Error:", error);
       setError('An error occurred while logging in.');

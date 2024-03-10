@@ -34,7 +34,8 @@
     "react-native-swipe-list-view": "^3.2.9",
     "react-native-tab-view": "^3.5.2",
     "react-native-virtualized-view": "^1.0.0",
-    "react-router-dom": "^6.21.1"
+    "react-router-dom": "^6.21.1",
+    "recyclerlistview": "^4.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

@@ -66,21 +66,41 @@ router.post("/AddToCart", upload.single('image'), async (req, resp) => {
 });
 
 
+// API to retrive cart products
 router.get("/CartData", async (req, resp) => {
     try {
         const cartData = await Cart.find();
-        const dataArray = Array.isArray(cartData) ? cartData : [cartData]; // Ensure data is always an array
-        if (dataArray.length > 0) {
-            resp.status(200).send({ success: true, msg: "Cart Product Retrived", data: dataArray });
+        // const dataArray = Array.isArray(cartData) ? cartData : [cartData]; 
+        if (cartData.length > 0) {
+            resp.status(200).send({ success: true, msg: "Cart Product Retrived", data: cartData });
         } else {
             resp.status(200).send({ success: true, msg: "Cart is empty!!!" });
         }
-        console.log("cart data");
+        console.log("cart data", cartData.length);
     } catch (error) {
         resp.status(400).send({ success: false, msg: error.message });
     }
 });
 
+// API to delete cart product
+router.delete('/deleteCartProducts/:id', async (req, resp) => {
+    try {
+        // get requested product id 
+        const cartProductId = req.params.id;
+        const existingProduct = await Cart.findById(cartProductId);
+
+        if (!existingProduct) {
+            return resp.status(404).send({ error: 'Product not found on cart' });
+        }
+
+        const del = await Cart.deleteOne({ _id: cartProductId });
+        resp.status(200).send({ success: true, msg: `Product with id ${cartProductId} deleted successfully from cart.` });
+
+    } catch (error) {
+        console.error("Error in deleting cart product:", error);
+        resp.status(500).send({ error: "Internal Server Error" });
+    }
+});
 
 
 module.exports = router;

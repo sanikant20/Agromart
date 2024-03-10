@@ -94,7 +94,6 @@ router.post("/login", async (req, resp) => {
                             // Log the decoded payload for debugging
                             const decoded = jwt.decode(token);
                             // console.log('Decoded Token:', decoded);
-
                             resp.send({ user, auth: token }); 
                         }
                     });

@@ -1,77 +1,52 @@
 import React, { useState, useEffect } from 'react';
-import { Box, FormControl, ScrollView, Input, VStack, View, Text } from 'native-base';
+import { Box, FormControl, ScrollView, Input, VStack, View, Text, Spinner } from 'native-base';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 import Colors from '../../colors';
 import Buttone from '../Buttone';
 
 const Inputs = [
   {
-    label: "name",
+    label: "Name",
     key: "name"
   },
   {
-    label: "location",
+    label: "Location",
     key: "location"
   },
   {
-    label: "email",
+    label: "Email",
     key: "email"
   },
   {
-    label: "password",
+    label: "Password",
     key: "password"
   },
 ];
 
-const Profile = ({ route }) => {
-  const userId = route?.params?.userId;
-
-  console.log("Hello", userId);
-
+const Profile = () => {
   const [userData, setUserData] = useState([]);
-  // const [loading, setLoading] = useState(true); // Add loading state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        if (!userId) {
-          // userId is not defined, handle this case
-          throw new Error('User ID is not provided');
+        // Fetch user details from AsyncStorage
+        const storedUserData = await AsyncStorage.getItem('userDetails');
+        if (storedUserData) {
+          const parsedUserData = JSON.parse(storedUserData);
+          setUserData(parsedUserData);
+        } else {
+          console.error('User data not found in AsyncStorage');
         }
-
-        const response = await fetch(`http://192.168.1.77:5000/api/userData/${userId}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch user data');
-        }
-        const data = await response.json();
-        setUserData(data);
         setLoading(false);
       } catch (error) {
         console.error('Error fetching user data:', error.message);
-        // setLoading(false);
+        setLoading(false);
       }
     };
 
-    // Only fetch user data if userId is defined
-    if (userId) {
-      fetchUserData();
-    }
-  }, [userId]);
-
-  // if (loading) {
-  //   return (
-  //     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-  //       <Text>Loading...</Text>
-  //     </View>
-  //   );
-  // }
-
-  if (!userId) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>User ID is not provided</Text>
-      </View>
-    );
-  }
+    fetchUserData();
+  }, []);
 
   const renderInputField = (input) => {
     return (
@@ -102,6 +77,15 @@ const Profile = ({ route }) => {
       </FormControl>
     );
   };
+
+  if (loading) {
+    return (
+      <Box h="full" bg={Colors.white} px={5} justifyContent="center" alignItems="center">
+        <Spinner size="lg" accessibilityLabel="Loading user data" color={Colors.main} />
+        <Text mt={2}>Loading user data...</Text>
+      </Box>
+    );
+  }
 
   return (
     <Box h="full" bg={Colors.white} px={5}>
