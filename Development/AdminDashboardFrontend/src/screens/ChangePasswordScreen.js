@@ -12,7 +12,6 @@ const ChangePasswordScreen = () => {
             <main className="main-wrap">
                 <Header></Header>
                 <ChangePasswordMain />
-
             </main>
         </div>
     )

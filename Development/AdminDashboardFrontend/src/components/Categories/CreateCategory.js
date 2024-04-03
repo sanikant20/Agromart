@@ -2,10 +2,8 @@ import React, { useState } from "react";
 
 const CreateCategory = () => {
     const [categoryName, setCategoryName] = useState('');
-    // const [categoryImage, setImage] = useState('');
     const [description, setDescription] = useState('');
     const [error, setError] = useState(false);
-
 
     const addCategory = async (e) => {
         e.preventDefault();
@@ -25,13 +23,12 @@ const CreateCategory = () => {
             });
 
             const data = await result.json();
-            console.log(data);
+            console.log(data.allCategory);
             alert("Category Added successfully.");
             window.location.reload();
 
             // Reset the form and error state after successful submission
             setCategoryName('');
-            // setImage('');
             setDescription('');
             setError(false);
 
@@ -58,17 +55,6 @@ const CreateCategory = () => {
                     />
                     {error && !categoryName && <div style={{ color: 'red' }}>Enter Category Name</div>}
                 </div>
-
-                {/* <div className="mb-4">
-                    <label className="form-label">Image</label>
-                    <input 
-                        type="file"
-                        className="form-control py-3"
-                        value={categoryImage}
-                        onChange={(e) => setImage(e.target.value)}
-                    />
-                    {error && !categoryImage && <div style={{ color: 'red' }}>Enter Category Name</div>}
-                </div> */}
 
                 <div className="mb-4">
                     <label className="form-label">Description</label>

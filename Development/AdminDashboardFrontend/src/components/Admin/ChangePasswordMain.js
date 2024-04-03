@@ -1,104 +1,81 @@
 import React, { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const ChangePasswordMain = () => {
     const [oldPassword, setOldPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [error, setError] = useState('');
-
+    const [oldPasswordError, setOldPasswordError] = useState('');
+    const [newPasswordError, setNewPasswordError] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
-    const params = useParams();
 
     // getting the userID from the local storage
-    var userID = JSON.parse(window.localStorage.getItem("user"))._id;
-    var email = JSON.parse(window.localStorage.getItem("user")).email;
+    const user = JSON.parse(window.localStorage.getItem("user"));
+    const userID = user ? user._id : '';
+
+    const email = user ? user.email : '';
 
     const changePassword = async () => {
-        // Password validation
-        if (!oldPassword || !newPassword || !confirmPassword) {
-            setError("Please fill in all fields.");
-            return;
-        }
-
-        if (newPassword !== confirmPassword) {
-            setError("New password and confirm password doesn't match")
-            return
-        }
-
         try {
-            // Check if the entered old password matches the current password
-            const checkOldPasswordResponse = await fetch("http://localhost:5000/api/checkOldPassword", {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email: email, oldPassword })
-            });
-
-            // if (!checkOldPasswordResponse.ok) {
-            //     console.error("Error checking old password.");
-            //     return;
-            // }
-
-            const checkOldPasswordResult = await checkOldPasswordResponse.json();
-
-            if (!checkOldPasswordResult.passwordMatch) {
-                setError("Old password is incorrect");
+            if (!oldPassword) {
+                setOldPasswordError("Please enter old password");
                 return;
+            } else {
+                setOldPasswordError("");
             }
-        } catch {
-            console.error("Error", error)
-        }
-        try {
-            // Continue with the password change
-            const response = await fetch(`http://localhost:5000/api/changePassword/${params.id}`, {
+            if (!newPassword) {
+                setNewPasswordError("Please enter new password");
+                return;
+            } else {
+                setNewPasswordError("");
+            }
+
+            const response = await fetch("http://192.168.56.1:5000/api/changeUserPassword", {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email: email, oldPassword, newPassword, confirmPassword })
+                body: JSON.stringify({ email: email, oldPassword, newPassword })
             });
 
             if (!response.ok) {
-                console.error("Error fetching API.");
-                return;
+                const errorMessage = await response.text();
+                throw new Error(errorMessage);
             }
 
             const result = await response.json();
-
             console.log("Password change result:", result);
-
-            // Reset the input fields after a successful password change if needed
             setOldPassword('');
             setNewPassword('');
-            setConfirmPassword('');
-            setError('');
+            setOldPasswordError('');
+            setNewPasswordError('');
 
-            // Navigate to adminProfile page after successful password change
             navigate(`/adminProfile/${userID}`);
         } catch (error) {
-            console.error("Error", error);
+            setErrorMessage(error.message);
         }
     }
 
     return (
         <div>
-            <section className="content-main" style={{ maxWidth: "1200px" }}>
+            <section className="content-main">
                 <form>
-                    <div className="content-header d-flex justify-content-between align-items-center">
-
+                    <div className="content-header d-flex justify-content-center">
                         <h2 className="content-title">Change Password</h2>
-
                     </div>
 
-                    <div className="row mt-4">
+                    <div className="d-flex justify-content-center">
                         <div className="col-xl-8 col-lg-8">
                             <div className="card shadow-sm">
                                 <div className="card-body">
-                                    <div className="mb-3">
-                                        <label htmlFor="oldPassword" className="form-label">
-                                            Old Password
+                                    {errorMessage && (
+                                        <div className="alert alert-danger" role="alert">
+                                            {errorMessage}
+                                        </div>
+                                    )}
+                                    <div className="mb-3 d-flex align-items-center">
+                                        <label htmlFor="oldPassword" className="col-sm-4 col-form-label">
+                                            Old Password:
                                         </label>
                                         <input
                                             type="password"
@@ -108,13 +85,15 @@ const ChangePasswordMain = () => {
                                             value={oldPassword}
                                             onChange={(e) => setOldPassword(e.target.value)}
                                             style={{ textAlign: 'left' }}
-
                                         />
                                     </div>
+                                    {oldPasswordError && (
+                                        <p className="text-danger">{oldPasswordError}</p>
+                                    )}
 
-                                    <div className="mb-3">
-                                        <label htmlFor="new_password" className="form-label">
-                                            New Password
+                                    <div className="mb-3 d-flex align-items-center">
+                                        <label htmlFor="new_password" className="col-sm-4 col-form-label">
+                                            New Password:
                                         </label>
                                         <input
                                             type="password"
@@ -124,28 +103,10 @@ const ChangePasswordMain = () => {
                                             value={newPassword}
                                             onChange={(e) => setNewPassword(e.target.value)}
                                             style={{ textAlign: 'left' }}
-
                                         />
                                     </div>
-
-                                    <div className="mb-3">
-                                        <label htmlFor="confirm_password" className="form-label">
-                                            Confirm Password
-                                        </label>
-                                        <input
-                                            type="password"
-                                            placeholder="Confirm new password"
-                                            className="form-control"
-                                            id="confirm_password"
-                                            value={confirmPassword}
-                                            onChange={(e) => setConfirmPassword(e.target.value)}
-                                            style={{ textAlign: 'left' }}
-
-                                        />
-                                    </div>
-
-                                    {error && (
-                                        <p style={{ color: "red" }}>{error}</p>
+                                    {newPasswordError && (
+                                        <p className="text-danger">{newPasswordError}</p>
                                     )}
 
                                     <div className="mb-3 d-flex justify-content-between">
@@ -161,11 +122,11 @@ const ChangePasswordMain = () => {
                                             Save Password
                                         </button>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </form>
             </section>
         </div>

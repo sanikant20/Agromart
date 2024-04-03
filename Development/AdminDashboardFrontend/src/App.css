@@ -1,5 +1,45 @@
 @charset "UTF-8";
+/* Login Style */
+.App {
+  background-color: white;
+}
 
+.Auth-form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+}
+
+.Auth-form {
+  width: 420px;
+  box-shadow: rgb(0 0 0 / 16%) 1px 1px 10px;
+  padding-top: 30px;
+  padding-bottom: 20px;
+  border-radius: 8px;
+  background-color: white;
+}
+
+.Auth-form-content {
+  padding-left: 12%;
+  padding-right: 12%;
+}
+
+.Auth-form-title {
+  text-align: center;
+  margin-bottom: 1em;
+  font-size: 24px;
+  color: rgb(34, 34, 34);
+  font-weight: 800;
+}
+
+label {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgb(34, 34, 34);
+}
+/* Table style */
 .table thead th {
   color: #adb5bd;
   font-weight: 400;
@@ -76,6 +116,23 @@ a.disable {
   height: 96px;
   line-height: 96px !important;
   font-size: 42px;
+}
+
+.dlist {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dlist-term {
+  flex: 1;
+  margin: 0;
+}
+
+.dlist-description {
+  flex: 1;
+  margin: 0;
+  text-align: right;
 }
 
 .img-avatar {

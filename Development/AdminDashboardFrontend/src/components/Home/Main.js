@@ -1,7 +1,7 @@
 import React from "react";
 import TopTotal from "./TopTotal";
-import SaleStatistics from "./SaleStatistics";
-import ProductsStatics from "./ProductsStatics";
+import SaleStatistics from "./UserStatistics";
+import ProductsStatics from "./ProductStatistics";
 import LatestOrder from "./LatestOrder";
 
 const Main = () => {

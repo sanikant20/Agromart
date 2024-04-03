@@ -44,7 +44,7 @@ const EditAdminProfile = () => {
 
     // Update the admin details
     const editProfile = async (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
         try {
             let result = await fetch(`http://localhost:5000/api/editProfile/${params.id}`, {
                 method: "PUT",
@@ -79,97 +79,78 @@ const EditAdminProfile = () => {
         <div>
             <section className="content-main" style={{ maxWidth: "1200px" }}>
                 <form>
-                    <div className="content-header d-flex justify-content-between align-items-center">
-
+                    <div className="content-header d-flex justify-content-center">
                         <h2 className="content-title">Update Profile</h2>
-
                     </div>
-
-                    <div className="row mt-4">
+                    <div className="d-flex justify-content-center">
                         <div className="col-xl-8 col-lg-8">
                             <div className="card shadow-sm">
                                 <div className="card-body">
 
-                                    <div className="mb-3">
-                                        <label htmlFor="admin_name" className="form-label">
-                                            Name
-                                        </label>
+                                    <div className="row mb-3">
+                                        <div className="col-sm-6">
+                                            <label htmlFor="admin_name" className="form-label">
+                                                Name:
+                                            </label>
+                                            <input
+                                                type="text"
+                                                placeholder="Type here"
+                                                className="form-control"
+                                                id="admin_name"
+                                                value={name}
+                                                onChange={(e) => setName(e.target.value)}
+                                                style={{ textAlign: 'left' }}
+                                            />
+                                        </div>
 
-                                        <input
-                                            type="text"
-                                            placeholder="Type here"
-                                            className="form-control"
-                                            id="admin_name"
-                                            value={name}
-                                            onChange={(e) => setName(e.target.value)}
-                                       
-                                        style={{textAlign: 'left'}}
-
-                                        />
+                                        <div className="col-sm-6">
+                                            <label htmlFor="admin_role" className="form-label">
+                                                Role:
+                                            </label>
+                                            <input
+                                                type="text"
+                                                placeholder="Type here"
+                                                className="form-control"
+                                                id="admin_role"
+                                                value={role}
+                                                onChange={(e) => setRole(e.target.value)}
+                                                readOnly
+                                                style={{ textAlign: 'left' }}
+                                            />
+                                        </div>
                                     </div>
 
-                                    <div className="mb-3">
-                                        <label htmlFor="admin_role" className="form-label">
-                                            Role
-                                        </label>
-                                        <input
-                                            type="text"
-                                            placeholder="Type here"
-                                            className="form-control"
-                                            id="admin_role"
-                                            value={role}
-                                            onChange={(e) => setRole(e.target.value)}
-                                            readOnly
-                                            style={{textAlign: 'left'}}
+                                    <div className="row mb-3">
+                                        <div className="col-sm-6">
+                                            <label htmlFor="address" className="form-label">
+                                                Address:
+                                            </label>
+                                            <input
+                                                type="text"
+                                                placeholder="Type here"
+                                                className="form-control"
+                                                id="address"
+                                                value={location}
+                                                onChange={(e) => setLocation(e.target.value)}
+                                                style={{ textAlign: 'left' }}
+                                            />
+                                        </div>
 
-                                        />
+                                        <div className="col-sm-6">
+                                            <label htmlFor="email" className="form-label">
+                                                Email:
+                                            </label>
+                                            <input
+                                                type="text"
+                                                placeholder="Type here"
+                                                className="form-control"
+                                                id="email"
+                                                value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                                style={{ textAlign: 'left' }}
+                                            />
+                                        </div>
                                     </div>
-
-                                    <div className="mb-3">
-                                        <label htmlFor="address" className="form-label">
-                                            Address
-                                        </label>
-                                        <input
-                                            type="text"
-                                            placeholder="Type here"
-                                            className="form-control"
-                                            id="address"
-                                            value={location}
-                                            onChange={(e) => setLocation(e.target.value)}
-                                            style={{textAlign: 'left'}}
-
-                                        />
-                                    </div>
-
-                                    <div className="mb-3">
-                                        <label htmlFor="email" className="form-label">
-                                            Email
-                                        </label>
-                                        <input
-                                            type="text"
-                                            placeholder="Type here"
-                                            className="form-control"
-                                            id="email"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            style={{textAlign: 'left'}}
-
-                                        />
-                                    </div>
-
-                                    {/* <div className="mb-3">
-                                        <label htmlFor="profile_image" className="form-label">
-                                            Image URL
-                                        </label>
-                                        <input
-                                            type="text"
-                                            placeholder="Enter Image URL"
-                                            className="form-control"
-                                            id="profile_image"
-                                            value={image}
-                                            onChange={(e) => setImage(e.target.value)}
-                                        />
-                                    </div> */}
 
                                     <div className="mb-3 d-flex justify-content-between">
                                         <Link to={`/adminProfile/` + userID} className="btn btn-danger text-white">
@@ -182,11 +163,11 @@ const EditAdminProfile = () => {
                                             Save
                                         </button>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </form>
             </section>
         </div>

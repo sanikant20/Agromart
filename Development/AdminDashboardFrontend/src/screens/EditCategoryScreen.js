@@ -12,7 +12,6 @@ const CategoryScreen = () => {
             <main className="main-wrap">
                 <Header></Header>
                 <EditCategory></EditCategory>
-
             </main>
         </div>
     )

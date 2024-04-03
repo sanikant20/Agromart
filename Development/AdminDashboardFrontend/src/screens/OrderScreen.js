@@ -10,9 +10,7 @@ const OrderScreen = () =>{
             <main className="main-wrap">
                 <Header></Header>
                 <MainOrder></MainOrder>
-
             </main>
-
         </div>
     )
 }

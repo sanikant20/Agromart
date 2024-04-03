@@ -5,7 +5,6 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 const EditCategory = () => {
     const [categoryName, setCategoryName] = useState('');
     const [description, setDescription] = useState('');
-    // const [categoryImage, setCategoryImage] = useState('');
 
     const params = useParams();
     const navigate = useNavigate();
@@ -23,7 +22,6 @@ const EditCategory = () => {
 
                 setCategoryName(data.categoryName);
                 setDescription(data.description);
-                // setCategoryImage(data.categoryImage);
             } catch (error) {
                 if (error instanceof TypeError) {
                     console.error("Network error. Please check your internet connection.", error);
@@ -70,86 +68,62 @@ const EditCategory = () => {
 
     return (
         <div>
-            <section className="content-main" style={{ maxWidth: "1200px" }}>
+            <section className="content-main">
                 <form>
-                    <div className="content-header d-flex justify-content-between align-items-center">
-
+                    <div className="content-header d-flex justify-content-center">
                         <h2 className="content-title">Edit Category</h2>
-
                     </div>
-
-                    <div className="row mt-4">
+                    <div className="d-flex justify-content-center">
                         <div className="col-xl-8 col-lg-8">
                             <div className="card shadow-sm">
                                 <div className="card-body">
-                                    <div className="mb-3">
-                                        <label htmlFor="Category_Name" className="form-label">
+                                    <div className="mb-3 row align-items-center">
+                                        <label htmlFor="Category_Name" className="col-sm-4 col-form-label">
                                             Category Name
                                         </label>
-                                        <input
-                                            type="text"
-                                            placeholder="category name"
-                                            className="form-control"
-                                            id="Category_Name"
-                                            defaultValue={categoryName}
-                                            onChange={(e) => setCategoryName(e.target.value)}
-                                            style={{ textAlign: 'left' }}
-                                        />
+                                        <div className="col-sm-8">
+                                            <input
+                                                type="text"
+                                                placeholder="category name"
+                                                className="form-control"
+                                                id="Category_Name"
+                                                defaultValue={categoryName}
+                                                onChange={(e) => setCategoryName(e.target.value)}
+                                                style={{ textAlign: 'left' }}
+                                            />
+                                        </div>
                                     </div>
 
-
-                                    <div className="mb-3">
-                                        <label htmlFor="Category_description" className="form-label">
+                                    <div className="mb-3 row">
+                                        <label htmlFor="Category_description" className="col-sm-4 col-form-label">
                                             Description
                                         </label>
-                                        <textarea
-                                            placeholder="Write description"
-                                            className="form-control"
-                                            id="Category_description"
-                                            defaultValue={description}
-                                            onChange={(e) => setDescription(e.target.value)}
-                                            rows="5"
-                                            style={{ textAlign: 'left' }}
-                                        ></textarea>
+                                        <div className="col-sm-8">
+                                            <textarea
+                                                placeholder="Write description"
+                                                className="form-control"
+                                                id="Category_description"
+                                                defaultValue={description}
+                                                onChange={(e) => setDescription(e.target.value)}
+                                                rows="3"
+                                                style={{ textAlign: 'left' }}
+                                            ></textarea>
+                                        </div>
                                     </div>
-
-                                    {/* <div className="mb-3">
-                                        <label htmlFor="Category_image" className="form-label">
-                                            Image URL
-                                        </label>
-                                        <input
-                                            type="text"
-                                            placeholder="Enter Image URL"
-                                            className="form-control"
-                                            id="Category_image"
-                                            defaultValue={categoryImage}
-                                            onChange={(e) => setCategoryImage(e.target.value)}
-                                        />
-                                        <input
-                                            type="file"
-                                            placeholder="Enter Image from file "
-                                            className="form-control"
-                                            id="product_image"
-                                            defaultValue={categoryImage}
-                                            onChange={(e) => setCategoryImage(e.target.value)}
-                                        />
-                                    </div> */}
 
                                     <div className="mb-3 d-flex justify-content-between">
                                         <Link to="/categories" className="btn btn-danger text-white">
                                             Go to Category
                                         </Link>
-                                        <button type="button"
-                                            onClick={updateCategory}
-                                            className="btn btn-primary">
+                                        <button type="button" onClick={updateCategory} className="btn btn-primary">
                                             Update
                                         </button>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
                     </div>
+
                 </form>
             </section>
         </div>

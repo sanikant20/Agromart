@@ -30,11 +30,11 @@ function App() {
   return (
     <Router>
       <Routes>
-        
-        <Route path='/login' element={<Signin />}  />
+
+        <Route path='/login' element={<Signin />} />
         <Route path='/signup' element={< Signup />} />
 
-        <Route path="/" element={<HomeScreen />} exact/>
+        <Route path="/" element={<HomeScreen />} />
         <Route path="/products" element={<ProductScreen />} />
         <Route path="/addProduct" element={<AddProducts />} />
         <Route path="/product/:id" element={<EditProduct />} />
@@ -43,14 +43,14 @@ function App() {
         <Route path="/category/:id" element={<EditCategory />} />
 
         <Route path="/orders" element={<OrderScreen />} />
-        <Route path='/order' element={<OrderDetailScreen />} />
+        <Route path='/order/:id' element={<OrderDetailScreen />} />
 
         <Route path='/users' element={<UserScreen />} />
-        <Route path='/userDetails/:id' element={< UserDetailScreen/>}/>
+        <Route path='/userDetails/:id' element={< UserDetailScreen />} />
 
         <Route path='/adminProfile/:id' element={<AdminScreen />} />
         <Route path='/editAdminInfo/:id' element={<EditAdminInfo />} />
-        <Route path='/changePassword/:id' element={<ChangePassword />}/>
+        <Route path='/changePassword/:id' element={<ChangePassword />} />
 
         <Route path='*' element={<PageNotFound />} />
 

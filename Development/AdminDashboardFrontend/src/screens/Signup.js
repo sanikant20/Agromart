@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./Signin_Signup.css";
 
 const SignupForm = () => {
-    const [name, setName] = useState("");
-    const [role, setRole] = useState("");
-    const [location, setLocation] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    // const [userImage, setUserImage] = useState(null);
+    const [name, setName] = useState('');
+    const [location, setLocation] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
     const navigate = useNavigate();
@@ -44,38 +41,38 @@ const SignupForm = () => {
     const handleSignup = async (e) => {
         e.preventDefault();
 
-        // Email existance
+        // Email existence check
         const emailExists = await checkEmailExistence();
-
         if (emailExists) {
-            alert("Email already exists. Choose a different email address.");
+            setError("Email or username already taken.");
             return;
         }
-
+        // Password length check
+        if (password.length < 6) {
+            setError("Password must be at least 6 characters long.");
+            return;
+        }
         // Create new user
         try {
-            console.log(name, role, location, email, password);
             setError('');
 
-            if (!name || !role || !location || !email || !password) {
+            if (!name || !location || !email || !password) {
                 setError('Please provide all details.');
                 return;
             }
-            
+
             // Fetching the server with a POST request for signup
-            let result = await fetch('http://localhost:5000/api/register', {
+            const result = await fetch('http://localhost:5000/api/register', {
                 method: 'POST',
-                body: JSON.stringify({ name, role, location, email, password }),
+                body: JSON.stringify({ name, role: 'admin', location, email, password }),
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
 
-            result = await result.json();
-            console.log(result);
-
-            localStorage.setItem('user', JSON.stringify(result.result));
-            localStorage.setItem('token', JSON.stringify(result.auth));
+            const data = await result.json();
+            localStorage.setItem('user', JSON.stringify(data.result));
+            localStorage.setItem('token', JSON.stringify(data.auth));
             navigate('/login');
 
         } catch (error) {
@@ -85,67 +82,70 @@ const SignupForm = () => {
     };
 
     return (
-        <div>
-            <form onSubmit={handleSignup}>
-                <div className="page">
-                    <div className="cover">
-                        <h1>Register</h1>
-                        <h3>Signup</h3>
+        <div className="Auth-form-container">
+            <form className="Auth-form" onSubmit={handleSignup}>
+                <div className="Auth-form-content">
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} >
+                        <img src="/logo.jpg"
+                            className="logo"
+                            alt="Agromart Logo "
+                            style={{ height: "100px", width: "100px" }}
+                        />
+                    </div>
+                    <h3 className="Auth-form-title">Sign Up</h3>
+                    <div className="form-group mt-3">
+                        <label>Name</label>
                         <input
                             type="text"
-                            placeholder="name"
+                            className="form-control mt-1"
+                            placeholder="Enter name"
                             name="name"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            required
                         />
+                    </div>
+                    <div className="form-group mt-3">
+                        <label>Address</label>
                         <input
                             type="text"
-                            placeholder="address"
+                            className="form-control mt-1"
+                            placeholder="Enter address"
                             name="location"
                             value={location}
                             onChange={(e) => setLocation(e.target.value)}
-                            required
                         />
+                    </div>
+                    <div className="form-group mt-3">
+                        <label>Email or Username</label>
                         <input
                             type="text"
-                            placeholder="username or email"
+                            className="form-control mt-1"
+                            placeholder="Enter email"
                             name="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            required
                         />
+                    </div>
+                    <div className="form-group mt-3">
+                        <label>Password</label>
                         <input
                             type="password"
-                            placeholder="password"
+                            className="form-control mt-1"
+                            placeholder="Enter password"
                             name="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
-                        {/* <input
-                            type="file"
-                            placeholder="Profile Image"
-                            name="userImage"
-                            value={userImage}
-                            onChange={(e) => setUserImage(e.target.value)}
-                        /> */}
-
-                        <div>
-                            <label>Choose your role:</label>
-                            <select name="role" value={role} onChange={(e) => setRole(e.target.value)}>
-                                <option value="">Select Role</option>
-                                <option value="Admin">Admin</option>
-                            </select>
-                        </div>
-
-                        <button className="btn btn-success btn-lg btn-block login-btn" type="submit">Signup</button>
-
-                        {error && <p style={{ color: "red" }}>{error}</p>}
-
-                        <p className="signup">
-                            Already have an account? <Link to="/login">Login</Link>
-                        </p>
                     </div>
+                    {error && <p style={{ color: "red" }}>{error}</p>}
+                    <div className="d-grid gap-2 mt-3">
+                        <button type="submit" className="btn btn-primary">
+                            Submit
+                        </button>
+                    </div>
+                    <p className="forgot-password text-right mt-2">
+                        Already have an account? <Link to="/login">Login</Link>
+                    </p>
                 </div>
             </form>
         </div>

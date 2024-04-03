@@ -24,102 +24,86 @@ const UserDetail = () => {
 
     return (
         <div>
-            <section className="content-main" style={{ maxWidth: "1200px" }}>
+            <section className="content-main">
                 <form>
-                    <div className="content-header d-flex justify-content-between align-items-center">
-
-                        <h2 className="content-title">User Profile</h2>
+                    <div className="content-header d-flex justify-content-center">
+                        <h2 className="content-title">User Detail</h2>
                     </div>
 
-                    <div className="row mt-4">
+                    <div className="d-flex justify-content-center">
                         <div className="col-xl-8 col-lg-8">
                             <div className="card shadow-sm">
                                 <div className="card-body">
 
-                                    <div className="mb-3">
-                                        <label htmlFor="admin_name" className="form-label">
-                                            Name
-                                        </label>
-
-                                        <input
-                                            type="text"
-                                            placeholder="Name"
-                                            className="form-control"
-                                            id="admin_name"
-                                            value={users.name}
-                                            style={{textAlign: 'left'}}
-                                        // onChange={(e) => setName(e.target.value)}
-                                        // readOnly
-                                        />
+                                    <div className="row mb-3">
+                                        <div className="col">
+                                            <label htmlFor="admin_name" className="form-label">
+                                                Name
+                                            </label>
+                                            <input
+                                                type="text"
+                                                placeholder="Name"
+                                                className="form-control"
+                                                id="admin_name"
+                                                value={users.name}
+                                                style={{ textAlign: 'left' }}
+                                                readOnly
+                                            />
+                                        </div>
+                                        <div className="col">
+                                            <label htmlFor="admin_role" className="form-label">
+                                                Role
+                                            </label>
+                                            <input
+                                                type="text"
+                                                placeholder="Role"
+                                                className="form-control"
+                                                id="admin_role"
+                                                value={users.role}
+                                                readOnly
+                                                style={{ textAlign: 'left' }}
+                                            />
+                                        </div>
                                     </div>
 
-                                    <div className="mb-3">
-                                        <label htmlFor="admin_role" className="form-label">
-                                            Role
-                                        </label>
-                                        <input
-                                            type="text"
-                                            placeholder="Role"
-                                            className="form-control"
-                                            id="admin_role"
-                                            value={users.role}
-                                            // onChange={(e) => setRole(e.target.value)}
-                                            readOnly
-                                            style={{textAlign: 'left'}}
-                                        />
+                                    <div className="row mb-3">
+                                        <div className="col">
+                                            <label htmlFor="address" className="form-label">
+                                                Address
+                                            </label>
+                                            <input
+                                                type="text"
+                                                placeholder="Address"
+                                                className="form-control"
+                                                id="address"
+                                                value={users.location}
+                                                readOnly
+                                                style={{ textAlign: 'left' }}
+                                            />
+                                        </div>
+                                        <div className="col">
+                                            <label htmlFor="email" className="form-label">
+                                                Email
+                                            </label>
+                                            <input
+                                                type="text"
+                                                placeholder="Email"
+                                                className="form-control"
+                                                id="email"
+                                                value={users.email}
+                                                readOnly
+                                                style={{ textAlign: 'left' }}
+                                            />
+                                        </div>
                                     </div>
 
-                                    <div className="mb-3">
-                                        <label htmlFor="address" className="form-label">
-                                            Address
-                                        </label>
-                                        <input
-                                            type="text"
-                                            placeholder="Address"
-                                            className="form-control"
-                                            id="address"
-                                            value={users.location}
-                                        // onChange={(e) => setLocation(e.target.value)}
-                                        style={{textAlign: 'left'}}
-
-                                        />
+                                    <div className="row mb-3">
+                                        <div className="col">
+                                            <Link to={`/users/`} className="btn btn-danger text-white">
+                                                Go Back
+                                            </Link>
+                                        </div>
                                     </div>
-
-                                    <div className="mb-3">
-                                        <label htmlFor="email" className="form-label">
-                                            Email
-                                        </label>
-                                        <input
-                                            type="text"
-                                            placeholder="Email"
-                                            className="form-control"
-                                            id="email"
-                                            value={users.email}
-                                        // onChange={(e) => setEmail(e.target.value)}
-                                        style={{textAlign: 'left'}}
-
-                                        />
-                                    </div>
-
-{/* 
-                                    <div className="mb-3">
-                                        <label htmlFor="profile_image" className="form-label">
-                                            Image
-                                        </label>
-                                        <input
-                                            type="file"
-                                            placeholder="Select Profile Image "
-                                            className="form-control"
-                                            id="profile_image"
-                                            value={users.image}
-                                        // onChange={(e) => setImage(e.target.value)}
-                                        style={{textAlign: 'left'}}
-
-                                        />
-                                    </div> */}
-                                    <Link to={`/users/`} className="btn btn-danger text-white">
-                                        Go Back
-                                    </Link>
                                 </div>
                             </div>
                         </div>

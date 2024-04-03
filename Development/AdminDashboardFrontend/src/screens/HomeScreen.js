@@ -15,23 +15,3 @@ const HomeScreen = () => {
 }
 
 export default HomeScreen;
-
-// import React from "react";
-// import Sidebar from "../components/users/Sidebar";
-// import Header from "../components/users/Header";
-
-// const HomeScreen = () => {
-//   return (
-//     <div className="home-screen-container">
-//       <Sidebar />
-//       <main className="main-wrap">
-//         {/* <Header /> */}
-//         <div>
-//           <p>Welcome to the HomeScreen! Add your content here.</p>
-//         </div>
-//       </main>
-//     </div>
-//   );
-// };
-
-// export default HomeScreen;

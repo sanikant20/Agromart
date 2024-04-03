@@ -1,21 +1,11 @@
-// LoginForm.js
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./Signin_Signup.css";
 
 const LoginForm = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const auth = localStorage.getItem('user');
-        if (auth) {
-            navigate('/');
-        }
-    }, [navigate]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -36,14 +26,27 @@ const LoginForm = () => {
             });
 
             const result = await response.json();
-            console.log(result);
 
-            if (result.auth) {
-                localStorage.setItem('user', JSON.stringify(result.user));
-                localStorage.setItem('token', JSON.stringify(result.auth));
-                navigate('/');
+            if (response.ok) {
+                if (result.auth) {
+                    // Check user role here
+                    if (result.user.role === 'admin') {
+                        localStorage.setItem('user', JSON.stringify(result.user));
+                        localStorage.setItem('token', JSON.stringify(result.auth));
+                        navigate('/');
+                    } else {
+                        setError('Invalid user role.');
+                    }
+                } else {
+                    setError('Invalid email or password.');
+                }
             } else {
-                setError('Invalid email or password.');
+                // Handle server errors
+                if (result && result.result) {
+                    setError(result.result);
+                } else {
+                    setError('An unexpected error occurred. Please try again later.');
+                }
             }
         } catch (error) {
             console.error("Error:", error);
@@ -51,52 +54,55 @@ const LoginForm = () => {
         }
     };
 
-    return (
-        <div>
-            <form onSubmit={handleLogin}>
-                <div className="page">
-                    <div className="cover">
-                        
-                        <h3>Login</h3>
+    useEffect(() => {
+        const auth = localStorage.getItem('user');
+        if (auth) {
+            navigate('/');
+        }
+    }, [navigate]);
 
+    return (
+        <div className="Auth-form-container">
+
+            <form className="Auth-form" onSubmit={handleLogin}>
+                <div className="Auth-form-content">
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} >
+                        <img src="/logo.jpg"
+                            className="logo"
+                            alt="Agromart Logo "
+                            style={{ height: "100px", width: "100px" }}
+                        />
+                    </div>
+                    <h3 className="Auth-form-title">Sign In</h3>
+                    <div className="form-group mt-3">
+                        <label>Email or Username</label>
                         <input
                             type="text"
-                            placeholder="username or email"
-                            name="email"
+                            className="form-control mt-1"
+                            placeholder="Enter email or username"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            
                         />
-
+                    </div>
+                    <div className="form-group mt-3">
+                        <label>Password</label>
                         <input
                             type="password"
-                            placeholder="password"
-                            name="password"
+                            className="form-control mt-1"
+                            placeholder="Enter password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            
                         />
-
-                        <button className="btn btn-success login-btn" type="submit">Login</button>
-
-                       
-                        {error.includes('Invalid email or password.') && (
-                            <p style={{color:"red"}}>Invalid email or password. Please try again.</p>
-                        )}
-                        {error.includes('Failed to login.') && (
-                            <p style={{color:"red"}}>An unexpected error occurred. Please try again later.</p>
-                        )}
-                        {error.includes('Invalid request.') && (
-                            <p style={{color:"red"}}>Invalid request. Please provide both email and password.</p>
-                        )}
-                        {error.includes('No user found.') && (
-                            <p style={{color:"red"}}>No user found with the provided email.</p>
-                        )}
-                        
-                        <p>
-                            Don't have an account? <Link to="/signup">Signup</Link>
-                        </p>
                     </div>
+                    {error && <p style={{ color: "red" }}>{error}</p>}
+                    <div className="d-grid gap-2 mt-3">
+                        <button type="submit" className="btn btn-primary">
+                            Submit
+                        </button>
+                    </div>
+                    <p className="forgot-password text-right mt-2">
+                        Don't have account? <Link to="/signup">Register</Link>
+                    </p>
                 </div>
             </form>
         </div>

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import TopTotal from "../Home/TopTotal";
 
 const MainProducts = () => {
     const [products, setProducts] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const productsPerPage = 12;
 
     useEffect(() => {
         const getProducts = async () => {
@@ -13,12 +14,13 @@ const MainProducts = () => {
                     throw new Error("Error while fetching products data");
                 }
                 const result = await response.json();
-                setProducts(result);
+                // Sort orders by createdAt date in descending order
+                const newProduct = result.products.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setProducts(newProduct);
             } catch (error) {
                 console.error("Error while fetching data", error);
             }
         };
-        // Call the function to fetch data
         getProducts();
     }, []);
 
@@ -42,7 +44,38 @@ const MainProducts = () => {
         } catch (error) {
             console.error("Error:", error);
         }
-    }
+    };
+
+    const HandleProductSearch = async (event) => {
+        try {
+            const key = event.target.value;
+            if (key) {
+                const response = await fetch(`http://localhost:5000/api/searchProduct/${key}`);
+                if (!response.ok) {
+                    throw new Error("Failed to fetch search results. Please try again later.");
+                }
+                const result = await response.json();
+                setProducts(result);
+            } else {
+                const response = await fetch("http://localhost:5000/api/products");
+                if (!response.ok) {
+                    throw new Error("Error while fetching products data");
+                }
+                const result = await response.json();
+                setProducts(result.products);
+            }
+        } catch (error) {
+            console.error(error);
+            alert("An error occurred: " + error.message);
+        }
+    };
+
+    // Logic to paginate products
+    const indexOfLastProduct = currentPage * productsPerPage;
+    const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+    const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
+
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     return (
         <section className="content-main">
@@ -59,72 +92,99 @@ const MainProducts = () => {
                 <header className="card-header bg-white">
                     <div className="row gx-3 py-3">
                         <div className="col-lg-4 col-md-6 me-auto">
-                            <input type="search" placeholder="Search..." className="form-control p-2" />
+                            <input
+                                type="search"
+                                placeholder="Search..."
+                                className="form-control p-2"
+                                onChange={HandleProductSearch}
+                            />
                         </div>
-                        <div className="col-lg-2 col-6 col-md-3">
+                        <div onChange={HandleProductSearch} className="col-lg-2 col-6 col-md-3">
                             <select className="form-select">
-                                <option>All Category</option>
+                                <option value="">All Products</option>
                                 <option>seeds</option>
-                                <option>Fertilizers</option>
-                                <option></option>
+                                <option>Fertilizer</option>
+                                <option>Pesticides</option>
+                                <option>Tools</option>
                             </select>
                         </div>
                     </div>
                 </header>
 
                 <div className="card-body">
-                    {/* <TopTotal totalProducts={products.length} /> */}
                     <div className="row">
-                        {products.map((singleProduct) => (
-                            <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={singleProduct._id}>
-                                <div className="card card-product-grid shadow-sm">
-                                    <Link to="#" className="img-wrap">
-                                        {/* Rendering the image */}
-                                        {singleProduct.image && singleProduct.image.data && (
-                                            <img
-                                                src={`data:image/png;base64,${Buffer.from(singleProduct.image.data.data).toString("base64")}`}
-                                                alt={singleProduct.name}
-                                                className="img-fluid product-image"
-                                            />
-                                        )}
-                                    </Link>
+                        {currentProducts.length > 0 ? (
+                            currentProducts.map((singleProduct) => (
+                                <div className="col-lg-3 col-md-4 col-sm-6 mb-4" key={singleProduct._id}>
+                                    <div className="card card-product-grid shadow-sm">
 
-                                    <div className="card-body">
-                                        <Link to="#" className="title text-truncate product-name">
-                                            {singleProduct.name}
+                                        <Link to="#" className="img-wrap">
+                                            {singleProduct.image && singleProduct.image.data && (
+                                                <img
+                                                    src={`data:image/png;base64,${Buffer.from(singleProduct.image.data.data).toString("base64")}`}
+                                                    alt={singleProduct.name}
+                                                    className="img-fluid product-image"
+                                                    style={{ width: '500px', height: '500px' }}
+                                                />
+                                            )}
                                         </Link>
 
-                                        <div className="price mb-2">NPR {singleProduct.price}</div>
-
-                                        <div className="row mt-3">
-                                            <div className="col-6">
-                                                <Link
-                                                    to={`/product/${singleProduct._id}`}
-                                                    className="btn btn-sm btn-outline-success d-flex align-items-center justify-content-center p-2 pb-3 w-100"
-                                                >
-                                                    <i className="fas fa-pen me-2">Edit</i>
-                                                </Link>
+                                        <div className="card-body">
+                                            <div className="product-details" style={{ width: '180px', overflowX: 'auto' }}>
+                                                <div className="price mb-2" style={{ display: 'flex' }}>
+                                                    <span style={{ flex: '1' }}>Name:</span>
+                                                    <span style={{ flex: '2' }}>{singleProduct.name}</span>
+                                                </div>
                                             </div>
 
-                                            <div className="col-6">
-                                                <button
-                                                    className="btn btn-sm btn-outline-danger d-flex align-items-center justify-content-center p-2 pb-3 w-100"
-                                                    onClick={() => deleteProduct(singleProduct._id)}
-                                                >
-                                                    <i className="fas fa-trash-alt me-2">Delete</i>
+                                            <div className="price mb-2">Price: Rs {singleProduct.price}</div>
+                                            <div className="price mb-2">Qty: {singleProduct.quantity}</div>
+                                            <div className="mb-1 d-flex justify-content-between">
+                                                <Link to={`/product/${singleProduct._id}`} className="btn btn-success text-white">
+                                                    <i className="fas fa-pen">Edit</i>
+                                                </Link>
+                                                <button type="button" onClick={() => deleteProduct(singleProduct._id)} className="btn btn-danger">
+                                                    <i className="fas fa-trash-alt">Delete</i>
                                                 </button>
                                             </div>
                                         </div>
+
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-
+                            ))
+                        ) : (
+                            <caption>
+                                <b>No product available...</b>
+                            </caption>
+                        )}
                     </div>
+
+                    {/* Pagination */}
+                    <nav className="float-end mt-4" aria-label="page navigation">
+                        <ul className="pagination">
+                            <li className={`page-item ${currentPage === 1 && "disabled"}`}>
+                                <Link className="page-link" to="#" onClick={() => paginate(currentPage - 1)}>
+                                    Previous
+                                </Link>
+                            </li>
+                            {Array.from({ length: Math.ceil(products.length / productsPerPage) }).map((_, index) => (
+                                <li className={`page-item ${currentPage === index + 1 && "active"}`} key={index}>
+                                    <Link className="page-link" to="#" onClick={() => paginate(index + 1)}>
+                                        {index + 1}
+                                    </Link>
+                                </li>
+                            ))}
+                            <li className={`page-item ${currentPage === Math.ceil(products.length / productsPerPage) && "disabled"}`}>
+                                <Link className="page-link" to="#" onClick={() => paginate(currentPage + 1)}>
+                                    Next
+                                </Link>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </section>
-    )
-}
+    );
+};
 
 export default MainProducts;

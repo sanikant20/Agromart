@@ -3,7 +3,6 @@ import $ from "jquery";
 import { Link, useNavigate } from "react-router-dom";
 
 const Header = () => {
-
     const navigate = useNavigate();
 
     const handleLogout = () => {
@@ -14,7 +13,6 @@ const Header = () => {
 
     // getting the userID from the local storage
     var userID = JSON.parse(window.localStorage.getItem("user"))._id;
-
 
     // Dropdown toggle handler
     useEffect(() => {
@@ -37,49 +35,21 @@ const Header = () => {
         };
     }, []);
 
-
+ 
     return (
         <header className="main-header navbar">
-            <div className="col-search" style={{ marginLeft: "15px" }}>
-                <form className="searchform">
-                    <div className="input-group">
-                        <input
-                            list="search_terms"
-                            type="text"
-                            className="form-control"
-                            placeholder="Search here"
-                        />
-                        <button className="btn btn-light bg" type="button">
-                            <i className="fas fa-search"></i>
-                        </button>
-                    </div>
-                    <datalist id="search_terms">
-                        <option value="products" />
-                        <option value="add products" />
-                        <option value="users" />
-                        <option value="category" />
-                        <option value="delete" />
-                    </datalist>
-                </form>
-            </div>
-            <div className="col-nav">
-                <ul className="nav">
+            <div className="col-nav ms-auto">
+                <ul className="nav d-flex align-items-center">
                     <li className="dropdown nav-item" style={{ marginRight: "130px" }}>
                         <Link
                             className="dropdown-toggle"
                             data-bs-toggle="dropdown"
-                            // to={"/adminprofile/"}
-                        >
-                            <img
-                                className="img-xs rounded-circle"
-                                src="/images/sani.jpg"
-                                alt="user"
-                            />
+                            style={{ color: 'black', fontWeight: 'bold' }}>
+                            Setting
                         </Link>
 
                         <div className="dropdown-menu dropdown-menu-end">
                             <Link className="dropdown-item" to={`/adminProfile/` + userID}>Profile</Link>
-                            
                             <button onClick={handleLogout} className="dropdown-item">Logout</button>
                         </div>
                     </li>

@@ -2,23 +2,17 @@ import React from "react";
 import { Link, NavLink } from "react-router-dom";
 
 const Sidebar = () => {
-
     return (
         <div>
             <aside className="navbar-aside" id="offcanvas_aside">
                 <div className="aside-top">
                     <Link to="/" className="brand-wrap">
-                        <img src="/images/1 logo.jpg"
+                        <img src="/logo.jpg"
                             className="logo"
-                            alt="Agromart Dashboard Logo "
-                            style={{ height: "100px", width: "100px" }}
+                            alt="Agromart Logo "
+                            style={{ height: "50px", width: "50px" }}
                         />
                     </Link>
-                    <div>
-                        <button className="btn btn-icon btn-aside-minimize">
-                            <i className="text-muted fas fa-stream"></i>
-                        </button>
-                    </div>
                 </div>
 
 

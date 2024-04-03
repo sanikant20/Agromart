@@ -9,7 +9,6 @@ const AddProducts = () =>{
             <main className="main-wrap">
                 <Header></Header>
                 <AddProductMain></AddProductMain>
-
             </main>
 
         </div>

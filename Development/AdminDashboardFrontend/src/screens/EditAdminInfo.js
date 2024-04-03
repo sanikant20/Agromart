@@ -10,9 +10,7 @@ const EditAdminInfo = () =>{
             <main className="main-wrap">
                 <Header />
                 <EditAdminProfile />
-
             </main>
-
         </div>
     )
 }

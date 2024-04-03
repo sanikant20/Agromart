@@ -17,7 +17,7 @@ const EditProduct = () => {
     useEffect(() => {
         const getProductDetails = async () => {
             try {
-                let result = await fetch(`http://localhost:5000/api/products/${params.id}`);
+                let result = await fetch(`http://localhost:5000/api/editProducts/${params.id}`);
 
                 if (!result.ok) {
                     throw new Error(`Failed to fetch product details. Status: ${result.status}`);
@@ -83,129 +83,143 @@ const EditProduct = () => {
 
 
     return (
-        <div>
-            <section className="content-main" style={{ maxWidth: "800px" }}>
+        <div >
+            <section className="content-main">
                 <form>
-                    <div className="content-header d-flex justify-content-between align-items-center">
+                    <div className="content-header d-flex justify-content-center">
                         <h2 className="content-title">Update Product</h2>
                     </div>
 
-                    <div className="row mt-4">
+                    <div className="d-flex justify-content-center">
                         <div className="col-xl-8 col-lg-8">
                             <div className="card shadow-sm">
                                 <div className="card-body">
-                                    <div className="mb-3">
-                                        <label htmlFor="product_category" className="form-label">
-                                            Category
-                                        </label>
-                                        <input
-                                            type="text"
-                                            placeholder="category"
-                                            className="form-control"
-                                            id="product_category"
-                                            defaultValue={category}
-                                            onChange={(e) => setCategory(e.target.value)}
-                                            readOnly
-                                            style={{textAlign: 'left'}}
-                                        />
+
+                                    <div className="row mb-3">
+                                        <div className="col-sm-6">
+                                            <label htmlFor="product_category" className="form-label">
+                                                Category:
+                                            </label>
+                                            <input
+                                                type="text"
+                                                placeholder="Category"
+                                                className="form-control"
+                                                id="product_category"
+                                                defaultValue={category}
+                                                onChange={(e) => setCategory(e.target.value)}
+                                                readOnly
+                                            />
+                                        </div>
+                                        <div className="col-sm-6">
+                                            <label htmlFor="product_name" className="form-label">
+                                                Product Name:
+                                            </label>
+                                            <input
+                                                type="text"
+                                                placeholder="Product Name"
+                                                className="form-control"
+                                                id="product_name"
+                                                defaultValue={name}
+                                                onChange={(e) => setName(e.target.value)}
+                                            />
+                                        </div>
                                     </div>
 
-                                    <div className="mb-3">
-                                        <label htmlFor="product_name" className="form-label">
-                                            Product Name
-                                        </label>
-                                        <input
-                                            type="text"
-                                            placeholder="Product Name"
-                                            className="form-control"
-                                            id="product_name"
-                                            defaultValue={name}
-                                            onChange={(e) => setName(e.target.value)}
-                                            style={{textAlign: 'left'}}
-                                        />
+
+                                    <div className="row mb-3">
+                                        <div className="col-sm-6">
+                                            <label htmlFor="product_price" className="form-label">
+                                                Price:
+                                            </label>
+                                            <input
+                                                type="number"
+                                                placeholder="Price"
+                                                className="form-control"
+                                                id="product_price"
+                                                defaultValue={price}
+                                                onChange={(e) => setPrice(e.target.value)}
+                                                min={0}
+                                            />
+                                        </div>
+                                        <div className="col-sm-6">
+                                            <label htmlFor="product_quantity" className="form-label">
+                                                Quantity:
+                                            </label>
+                                            <input
+                                                type="number"
+                                                placeholder="Quantity"
+                                                className="form-control"
+                                                id="product_quantity"
+                                                defaultValue={quantity}
+                                                onChange={(e) => setQuantity(e.target.value)}
+                                                min={0}
+                                            />
+                                        </div>
                                     </div>
 
-                                    <div className="mb-3">
-                                        <label htmlFor="product_price" className="form-label">
-                                            Price
-                                        </label>
-                                        <input
-                                            type="number"
-                                            placeholder="Price"
-                                            className="form-control"
-                                            id="product_price"
-                                            defaultValue={price}
-                                            onChange={(e) => setPrice(e.target.value)}
-                                            style={{textAlign: 'left'}}
-                                        />
+                                    <div className="row mb-3">
+                                        <div className="col-sm-6">
+                                            <label htmlFor="product_weight" className="form-label">
+                                                Weight:
+                                            </label>
+                                            <input
+                                                type="text"
+                                                placeholder="Weight"
+                                                className="form-control"
+                                                id="product_weight"
+                                                defaultValue={weight}
+                                                onChange={(e) => setWeight(e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="col-sm-6">
+                                            <div className="row mb-3">
+                                                <div className="col">
+                                                    <label htmlFor="product_images" className="form-label">
+                                                        Image:
+                                                    </label>
+                                                    <input
+                                                        type="file"
+                                                        className="form-control"
+                                                        name="product_image"
+                                                        id="product_image"
+                                                        onChange={handleImageChange}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div className="mb-3">
-                                        <label htmlFor="product_quantity" className="form-label">
-                                            Quantity
-                                        </label>
-                                        <input
-                                            type="number"
-                                            placeholder="Quantity"
-                                            className="form-control"
-                                            id="product_quantity"
-                                            defaultValue={quantity}
-                                            onChange={(e) => setQuantity(e.target.value)}
-                                            style={{textAlign: 'left'}}
-                                        />
+                                    <div className="row mb-3">
+                                        <div className="col">
+                                            <label htmlFor="product_description" className="form-label">
+                                                Description:
+                                            </label>
+                                            <textarea
+                                                placeholder="Write description"
+                                                className="form-control"
+                                                id="product_description"
+                                                defaultValue={description}
+                                                onChange={(e) => setDescription(e.target.value)}
+                                                rows="5"
+                                            ></textarea>
+                                        </div>
                                     </div>
 
-                                    <div className="mb-3">
-                                        <label htmlFor="product_weight" className="form-label">
-                                            Weight
-                                        </label>
-                                        <input
-                                            type="text"
-                                            placeholder="Weight"
-                                            className="form-control"
-                                            id="product_weight"
-                                            defaultValue={weight}
-                                            onChange={(e) => setWeight(e.target.value)}
-                                            style={{textAlign: 'left'}}
-                                        />
+                                    <div className="row mb-3">
+                                        <div className="col d-flex justify-content-between">
+                                            <Link to="/products" className="btn btn-danger text-white">
+                                                Go to Products
+                                            </Link>
+                                            <button
+                                                type="button"
+                                                onClick={handleUpdate}
+                                                className="btn btn-primary"
+                                            >
+                                                Update
+                                            </button>
+                                        </div>
                                     </div>
 
-                                    <div className="mb-3">
-                                        <label htmlFor="product_description" className="form-label">
-                                            Description
-                                        </label>
-                                        <textarea
-                                            placeholder="Write description"
-                                            className="form-control"
-                                            id="product_description"
-                                            defaultValue={description}
-                                            onChange={(e) => setDescription(e.target.value)}
-                                            rows="5"
-                                        ></textarea>
-                                    </div>
-
-                                    <div className="mb-3">
-                                        <label htmlFor="product_images" className="form-label">
-                                            Images
-                                        </label>
-                                        <input
-                                            type="file"
-                                            placeholder="Enter Image from file "
-                                            className="form-control"
-                                            name="product_image"
-                                            id="product_image"
-                                            onChange={handleImageChange}
-                                        />
-                                    </div>
-                                    <div className="mb-3 d-flex justify-content-between">
-                                        <Link to="/products" className="btn btn-danger text-white">
-                                            Go to products
-                                        </Link>
-
-                                        <button type="button" onClick={handleUpdate} className="btn btn-primary">
-                                            Update
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
                         </div>
