@@ -1,8 +1,10 @@
 import React from 'react';
-import { Box, Center, Image, ScrollView, Text, VStack, HStack } from 'native-base';
+import { Box, Center, Image, ScrollView, Text, VStack, HStack, Button } from 'native-base';
 import Buttone from '../Components/Buttone';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import Colors from '../colors';
+import { useNavigation } from '@react-navigation/native';
+
 
 const paymentMethod = [
   {
@@ -18,6 +20,12 @@ const paymentMethod = [
 ];
 
 function PaymentScreen() {
+  const navigation = useNavigation();
+
+  const HandlePaymentMethod = () => {
+    console.log("payment")
+    navigation.navigate('Main')
+  }
   return (
     <Box flex={1} safeArea bg={Colors.main} py={5}>
       {/* Header */}
@@ -65,10 +73,13 @@ function PaymentScreen() {
               </HStack>
             ))}
 
-            <Buttone bg={Colors.main} color={Colors.white} mt={5}>
+            <Button
+              onPress={HandlePaymentMethod}
+              rounded={50}
+              bg={Colors.main} color={Colors.white} mt={5}>
               Proceed
-            </Buttone>
-            
+            </Button>
+
           </VStack>
         </ScrollView>
       </Box>

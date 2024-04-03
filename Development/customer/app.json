@@ -21,7 +21,9 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/splash.png",
         "backgroundColor": "#48B600"
-      }
+      },
+      "package": "agromart.android"
+      
     },
     "web": {
       "favicon": "./assets/favicon.png"

@@ -1,13 +1,12 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Center, Pressable } from 'native-base';
-import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
 import { AntDesign, Entypo, FontAwesome, FontAwesome5, MaterialCommunityIcons } from 'react-native-vector-icons'; 
 import { StyleSheet } from 'react-native'; 
 import Colors from '../colors';
 import ProfileScreen from '../Screens/ProfileScreen';
 import CartScreen from '../Screens/CartScreen';
-import StackNav from './StackNav';
+import HomeScreen from '../Screens/HomeScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -26,14 +25,6 @@ const CustomTab = ({ children, onPress }) => (
 );
 
 const NavMenu = () => {
-    // Refresh screen on focus
-    useFocusEffect(
-        useCallback(() => {
-            // Add any refreshing logic here
-            console.log('Screen focused, refreshing...');
-        }, [])
-    );
-
     return (
         <Tab.Navigator
             backBehavior='main'
@@ -48,7 +39,7 @@ const NavMenu = () => {
             {/* Home */}
             <Tab.Screen
                 name='Main'
-                component={StackNav}
+                component={HomeScreen}
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <Center>
@@ -69,6 +60,7 @@ const NavMenu = () => {
             <Tab.Screen
                 name='Cart'
                 component={CartScreen}
+                
                 options={{
                     tabBarButton: (props) => <CustomTab {...props} />,
                     tabBarIcon: ({ focused }) => (

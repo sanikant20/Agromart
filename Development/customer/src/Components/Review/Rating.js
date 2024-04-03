@@ -1,10 +1,10 @@
 import { FontAwesome } from '@expo/vector-icons';
-import { HStack, Text } from 'native-base'; // Add Text import
+import { HStack, Text } from 'native-base';
 import React from 'react';
 import Colors from '../../colors';
 
 function Rating({ value, text }) {
-    const size = 8;
+    const size = 14;
     const color = Colors.orange;
     return (
         <HStack space={0.4} mt={1} alignItems="center">

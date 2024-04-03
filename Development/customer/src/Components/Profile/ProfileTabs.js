@@ -30,7 +30,7 @@ export default function ProfileTabs() {
             {...props}
             tabStyle={styles.tabStyle}
             indicatorStyle={{ backgroundColor: Colors.black }}
-            activeColor={Colors.main}
+            activeColor={Colors.orange}
             inactiveColor={Colors.white}
             renderLabel={({ route, color }) => 
                 <Text style={{ color, ...styles.text }}>
@@ -53,7 +53,7 @@ export default function ProfileTabs() {
 
 const styles = StyleSheet.create({
     tabStyle: {
-        backgroundColor: "lightgrey",
+        backgroundColor: "green",
     },
     text: {
         fontSize: 16,

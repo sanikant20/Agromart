@@ -29,17 +29,26 @@ function LoginScreen() {
         }
       });
       const result = await response.json();
-      console.log(result);
 
-      if (!result || !result.auth || result.role) {
-        setError('Invalid email, password, or user role with this email.');
+      if (!result || !result.auth) {
+        setError('Invalid email or password');
         return;
       }
 
+      // Check user role
+      if (result.user.role !== 'user') {
+        setError('Invalid user role');
+        return;
+      }
+
+      console.log("USer data:", result);
       // Store user details in AsyncStorage
       await AsyncStorage.setItem('userDetails', JSON.stringify(result.user));
-  
+      // Reset input fields
+      setEmail("");
+      setPassword("");
       navigation.navigate('Navmenu');
+
     } catch (error) {
       console.error("Error:", error);
       setError('An error occurred while logging in.');
@@ -65,11 +74,11 @@ function LoginScreen() {
         <Heading>Login</Heading>
 
         <VStack space={5} pt="6">
-          {/* Email */}
+          {/* Email or username */}
           <Input
             InputLeftElement={<MaterialIcons name="email" size={24} color="black" />}
             variant="underlined"
-            placeholder='use@gmail.com'
+            placeholder='email or username'
             w="70%"
             fontSize={18}
             color={Colors.main}
@@ -107,7 +116,7 @@ function LoginScreen() {
         <Button
           _pressed={{ bg: Colors.main }}
           my={15} w={'60%'} rounded={45}
-          bg={Colors.red}
+          bg={Colors.blue}
           onPress={RegisterPage}
         >
           Don't have account? Signup

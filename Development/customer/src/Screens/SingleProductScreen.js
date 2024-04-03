@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Center, Flex, HStack, Heading, Image, Spacer, Spinner, Text } from 'native-base';
+import { Box, Button, HStack, Heading, Image, Spacer, Spinner, Text } from 'native-base';
 import Colors from '../colors';
-import Rating from '../Components/Review/Rating';
 import NumericInput from 'react-native-numeric-input';
-import { Snackbar } from 'react-native-paper';
 import { ScrollView } from 'react-native-virtualized-view';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import ReviewProduct from '../Components/Review/ReviewProduct';
+import Rating from '../Components/Review/Rating';
+import SimilarProduct from '../Components/Products/SimilarProduct';
 var Buffer = require('buffer/').Buffer;
 
 function SingleProductScreen({ route }) {
@@ -13,23 +15,37 @@ function SingleProductScreen({ route }) {
   const [product, setProduct] = useState({});
   const [quantity, setQuantity] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [loading, setLoading] = useState(true); // Set loading state
+  const [userData, setUserData] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [similarProducts, setSimilarProducts] = useState([]);
+  const [averageRating, setAverageRating] = useState(0);
 
   const navigation = useNavigation();
+
 
   useEffect(() => {
     const getProductDetails = async () => {
       try {
-        let result = await fetch(`http://192.168.56.1:5000/api/products/${id}`);
+        let response = await fetch(`http://192.168.56.1:5000/api/products/${id}`);
 
-        if (!result.ok) {
-          throw new Error(`Failed to fetch product details. Status: ${result.status}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch product details. Status: ${response.status}`);
         }
-        let data = await result.json();
-        setProduct(data);
-        setTotalPrice(data.price);
-        console.log(data);
+        let result = await response.json();
+        setProduct(result);
+        setTotalPrice(result.price);
+        console.log(result);
+
+        // Once product details are fetched, fetch similar products
+        fetchSimilarProducts(result.category);
+
+        // Fetch average rating
+        let ratingResponse = await fetch(`http://192.168.56.1:5000/api/getReview/${id}`);
+        if (!ratingResponse.ok) {
+          throw new Error(`Failed to fetch average rating. Status: ${ratingResponse.status}`);
+        }
+        let ratingData = await ratingResponse.json();
+        setAverageRating(ratingData.averageRating);
 
         setLoading(false);
       } catch (error) {
@@ -40,6 +56,23 @@ function SingleProductScreen({ route }) {
     getProductDetails();
   }, [id]);
 
+
+  // Function to fetch similar products based on category
+  const fetchSimilarProducts = async (category) => {
+    try {
+      let response = await fetch(`http://192.168.56.1:5000/api/products?category=${category}`);
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch similar products. Status: ${response.status}`);
+      }
+      let result = await response.json();
+      setSimilarProducts(result.products);
+    } catch (error) {
+      console.error("Error fetching similar products:", error.message);
+    }
+  };
+
+  // Count total price 
   useEffect(() => {
     setTotalPrice(product ? product.price * quantity : 0);
   }, [product, quantity]);
@@ -49,8 +82,31 @@ function SingleProductScreen({ route }) {
     return Buffer.from(buffer).toString('base64');
   };
 
+  // retrive userdata
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const storedUserData = await AsyncStorage.getItem('userDetails');
+        if (storedUserData) {
+          const parsedUserData = JSON.parse(storedUserData);
+          setUserData(parsedUserData);
+        } else {
+          console.error('User data not found in AsyncStorage');
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUserData();
+  }, []);
+
+
+  // FromData to add product to cart
   const createFormData = () => {
     const formData = new FormData();
+    formData.append('user_id', userData._id);
     formData.append('product_id', product._id);
     formData.append('category', product.category);
     formData.append('name', product.name);
@@ -66,6 +122,7 @@ function SingleProductScreen({ route }) {
     return formData;
   };
 
+  // Fetch API to add product to cart
   const addToCart = async () => {
     try {
       const formData = createFormData();
@@ -75,13 +132,19 @@ function SingleProductScreen({ route }) {
       });
       const data = await response.json();
       console.log(data);
-      setSnackbarVisible(true);
-      navigation.navigate('Main');
+      alert("Product added to cart successfully!")
+      navigation.navigate("Main")
     } catch (error) {
-      console.error('Error adding product to cart:', error);
+      console.error("Error adding product to cart:", error.message);
+      if (error.message === 'Product not found') {
+        alert("Product not found. Please try again later.");
+      } else {
+        alert("Failed to add product to cart. Please try again later.");
+      }
     }
   };
 
+  // display loader
   if (loading) {
     return (
       <Box h="full" bg={Colors.white} px={5} justifyContent="center" alignItems="center">
@@ -91,8 +154,9 @@ function SingleProductScreen({ route }) {
     );
   }
 
+  console.log("ProductID:", product._id)
   return (
-    <Box safeArea flex={1} p={3} bg={Colors.white}>
+    <Box safeArea flex={1} p={3} bg={Colors.subGreen}>
       <ScrollView px={5} showsVerticalScrollIndicator={false}>
         <Image
           source={product.image?.data ?
@@ -100,13 +164,12 @@ function SingleProductScreen({ route }) {
             : null
           }
           alt='product image'
-          w='full' h={300}
-          resizeMode='contain'
+          w='100%'
+          h={320}
+          resizeMode='cover'
         />
-        <Heading bold fontSize={15} mb={2} lineHeight={22}>
-          Name :
-          <Text>{product.name}</Text>
-
+        <Heading bold fontSize={15} mt={1} mb={2} lineHeight={22}>
+          Name : <Text>{product.name}</Text>
         </Heading>
         <Heading bold fontSize={12} mb={2} lineHeight={17}>
           Weight : {product.weight}
@@ -114,12 +177,19 @@ function SingleProductScreen({ route }) {
         <Heading bold fontSize={12} mb={2} lineHeight={17}>
           Category : {product.category}
         </Heading>
-        <Rating value={product.rating} />
+        <Rating value={averageRating} />
 
         <HStack space={2} alignItems="center" my={5}>
+
           <NumericInput
             value={quantity}
-            onChange={value => setQuantity(value)}
+            onChange={value => {
+              if (value <= 0) {
+                setQuantity(0);
+              } else {
+                setQuantity(value);
+              }
+            }}
             totalWidth={140}
             totalHeight={40}
             iconSize={25}
@@ -148,17 +218,17 @@ function SingleProductScreen({ route }) {
           ADD TO CART
         </Button>
 
-        <Snackbar
-          visible={snackbarVisible}
-          onDismiss={() => setSnackbarVisible(false)}
-          duration={3000}
-          style={{ marginBottom: 70 }}
-        >
-          Product added to cart successfully!
-        </Snackbar>
+        <Box safeArea flex={1} p={3} bg={Colors.subGreen}>
+          <ReviewProduct productId={product._id} />
+
+          {/* Render Similar Products wrapped with the product category */}
+          <SimilarProduct navigation={navigation} products={similarProducts} category={product.category} />
+
+        </Box>
       </ScrollView>
     </Box>
   );
-}
-
+};
 export default SingleProductScreen;
+
+

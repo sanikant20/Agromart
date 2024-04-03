@@ -1,9 +1,8 @@
 import React from 'react';
-import { Box, Center, Text, Pressable, Button } from 'native-base';
+import { Box, Center, Text, Button } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import Colors from '../../colors';
 import { FontAwesome } from '@expo/vector-icons';
-import Buttone from '../Buttone';
 
 const CartEmpty = () => {
     const navigation = useNavigation();
@@ -23,23 +22,19 @@ const CartEmpty = () => {
                 </Text>
 
                 <Button
-                    fontSize={16}
+                    onPress={handleShopNow}
                     _pressed={{ bg: Colors.main }}
                     my={15}
-                    w={'90%'}
-                    h={'16%'}
-                    bold
+                    w='90%'
+                    h={16} 
                     rounded={45}
                     bg={Colors.main}
-                    onPress={handleShopNow}
                 >
                     Shop Now
                 </Button>
-
             </Center>
         </Box>
     );
 };
 
 export default CartEmpty;
-

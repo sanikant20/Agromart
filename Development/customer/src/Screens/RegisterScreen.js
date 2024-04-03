@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import Colors from "../colors";
-import { Box, Heading, Input, VStack, Image, Button } from 'native-base';
+import { Box, Heading, Input, VStack, Image, Button, Text } from 'native-base';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
 
 function RegisterScreen() {
   const navigation = useNavigation();
   const [name, setName] = useState("");
-  const [role, setRole] = useState("");
+  const [role, setRole] = useState("user");
   const [location, setLocation] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,7 +46,7 @@ function RegisterScreen() {
     // Create new user
     try {
       setError('');
-      if (!name || !role || !location || !email || !password) {
+      if (!name || !location || !email || !password) {
         setError('Please provide all details.');
         return;
       }
@@ -64,8 +62,7 @@ function RegisterScreen() {
       result = await result.json();
       console.log(result);
 
-      // await AsyncStorage.setItem("userData", JSON.stringify(result))
-      navigation.navigate('Menu');
+      navigation.navigate('Login');
 
     } catch (error) {
       console.error("Error:", error);
@@ -103,18 +100,6 @@ function RegisterScreen() {
             onChangeText={(text) => setName(text)}
           />
 
-          {/* Role */}
-          <Input
-            variant="underlined"
-            placeholder='customer'
-            w="70%"
-            fontSize={18}
-            color={Colors.main}
-            borderBottomColor={Colors.underline}
-            value={role}
-            onChangeText={(User) => setRole(User)}
-          />
-
           {/* Address */}
           <Input
             InputLeftElement={<Ionicons name="location" size={24} color="black" />}
@@ -130,7 +115,7 @@ function RegisterScreen() {
           {/* Email */}
           <Input
             InputLeftElement={<MaterialIcons name="email" size={24} color="black" />}
-            variant="underlined" placeholder='use@gmail.com'
+            variant="underlined" placeholder='email or username'
             w="70%"
             fontSize={18}
             color={Colors.main}
@@ -153,6 +138,9 @@ function RegisterScreen() {
           />
         </VStack>
 
+        {error && (
+          <Text style={{ color: "red" }}>{error}</Text>
+        )}
         <Button
           _pressed={{ bg: Colors.main }}
           my={15}

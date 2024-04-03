@@ -1,61 +1,58 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Flex, Heading, Image, Pressable, ScrollView, Text, Button } from 'native-base';
 import Colors from '../../colors';
-import Rating from '../Review/Rating';
 import { useNavigation } from '@react-navigation/native';
 var Buffer = require('buffer/').Buffer;
 
 const SeasonalProduct = () => {
     const navigation = useNavigation();
-    const [products, setProducts] = useState([]);
-    const [visibleProducts, setVisibleProducts] = useState(4);
+    const [visibleSeasonalProducts, setVisibleSeasonalProducts] = useState(2);
     const [loading, setLoading] = useState(null)
+    const [seasonalData, setSeasonalData] = useState([]);
 
     useEffect(() => {
-        const getProducts = async () => {
+        const getSeasonalProduct = async () => {
             try {
-                const response = await fetch("http://192.168.56.1:5000/api/products");
+                const response = await fetch("http:192.168.56.1:5000/api/seasonalProduct");
                 if (!response.ok) {
-                    throw new Error("Error while fetching products data");
+                    throw new Error({ success: false, message: "Error in fetching api", error })
                 }
-
-                const result = await response.json();
-                setProducts(result);
+                let result = await response.json();
+                // console.log("Seasonal Product:", result)
+                setSeasonalData(result)
                 setLoading(false)
             } catch (error) {
-                console.error("Error while fetching data", error);
+                console.error({ success: false, message: "Internal Server Errer", error })
             }
         };
+        getSeasonalProduct();
+    }, [])
 
-        // Call the function to fetch data
-        getProducts();
-    }, []);
 
     // Function to convert Buffer to base64
     const bufferToBase64 = (buffer) => {
         return Buffer.from(buffer).toString('base64');
     };
 
-    const loadMoreProducts = () => {
-        setVisibleProducts(visibleProducts + 4);
-    };
-
     if (loading) {
         return <Text>Loading...</Text>;
     }
+    const loadMoreSeasonalProducts = () => {
+        setVisibleSeasonalProducts(visibleSeasonalProducts + 5);
+    };
 
     return (
         <ScrollView flex={1} showsVerticalScrollIndicator={true}>
-            <Text color="blue.500" fontSize="lg" ml={4}>
-                Seasonal Products
-            </Text>
-
-            <Flex flexWrap="wrap" direction="row" justifyContent="space-between" px={5}>
+            {/* Seasonal Products card Lists  */}
+            <Heading bold fontSize={15} mb={2} ml={4} mt={4}>
+                SEASONAL PRODUCTS
+            </Heading>
+            <Flex flexWrap="wrap" direction="row" justifyContent="space-between" marginBottom={10} px={5}>
                 {
-                    products.slice(0, visibleProducts).map((singleProduct) => (
+                    seasonalData.slice(0, visibleSeasonalProducts).map((seasonalProduct) => (
                         <Pressable
-                            key={singleProduct._id}
-                            onPress={() => navigation.navigate("Single", { id: singleProduct._id })}
+                            key={seasonalProduct._id}
+                            onPress={() => navigation.navigate("Single", { id: seasonalProduct._id })}
                             w="47%"
                             bg={Colors.white}
                             rounded="md"
@@ -65,35 +62,41 @@ const SeasonalProduct = () => {
                             pb={2}
                             overflow="hidden"
                         >
-                            {singleProduct.image && singleProduct.image.data && (
-                                <Image
-                                    source={{ uri: `data:image/png;base64,${bufferToBase64(singleProduct.image.data)}` }}
-                                    accessibilityLabel={singleProduct.name}
-                                    alt={singleProduct.name}
-                                    w="full"
-                                    h={24}
-                                    resizeMode="contain"
-                                    onError={(error) => console.log(`Image load error: ${error.nativeEvent.error}`)}
-                                />
-                            )}
+                            <Box bg="white" rounded="md" overflow="hidden" w="100%" h={200}>
+                                {seasonalProduct.image && seasonalProduct.image.data && (
+                                    <Image
+                                        source={{ uri: `data:image/png;base64,${bufferToBase64(seasonalProduct.image.data)}` }}
+                                        accessibilityLabel={seasonalProduct.name}
+                                        alt={seasonalProduct.name}
+                                        w='100%'
+                                        h={135}
+                                        resizeMode='cover'
+                                        onError={(error) => console.log(`Image load error: ${error.nativeEvent.error}`)}
+                                    />
+                                )}
 
-                            <Box px={4} pt={1}>
-                                <Heading size="sm" bold>
-                                    Rs {singleProduct.price}
-                                </Heading>
-                                <Text fontSize={10} mt={1} isTruncated w="full">
-                                    {singleProduct.name}
-                                </Text>
-
-                                <Rating value={singleProduct.rating} />
+                                <Box px={4} pt={1}>
+                                    {seasonalProduct.quantity === 0 && (
+                                        <Text fontSize={16} style={{ color: 'red' }}>Out of Stock</Text>
+                                    )}
+                                    <Heading fontSize={11} mt={1} isTruncated w="full">
+                                        {seasonalProduct.name}
+                                    </Heading>
+                                    <Text fontSize={10} mt={1} isTruncated w="full">
+                                        Rs {seasonalProduct.price}
+                                    </Text>
+                                    <Text fontSize={10} mt={1} isTruncated w="full">
+                                        {seasonalProduct.category}
+                                    </Text>
+                                </Box>
                             </Box>
                         </Pressable>
                     ))
                 }
             </Flex>
-            {visibleProducts < products.length && (
-                <Button bg={Colors.main} color={Colors.white} alignSelf="center" my={5} onPress={loadMoreProducts}>
-                    Load More Seasonal Products
+            {visibleSeasonalProducts < seasonalData.length && (
+                <Button bg={Colors.main} color={Colors.white} alignSelf="center" mb={10} onPress={loadMoreSeasonalProducts}>
+                    Load More Season Products
                 </Button>
             )}
         </ScrollView>

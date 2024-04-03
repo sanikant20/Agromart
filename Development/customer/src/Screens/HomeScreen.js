@@ -9,9 +9,7 @@ function HomeScreen() {
   return (
     <Box flex={1} bg={Colors.subGreen}>
       <>
-        <HomeSearch />
         <RegularProduct />
-        {/* <SeasonalProducts /> */}
       </>
     </Box>
   )

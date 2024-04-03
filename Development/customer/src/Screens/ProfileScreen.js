@@ -1,31 +1,46 @@
 import { Center, Heading, Image, Text } from 'native-base';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Colors from '../colors';
 import ProfileTabs from '../Components/Profile/ProfileTabs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function ProfileScreen() {
+  const [userData, setUserData] = useState({});
+
+  // Render user data from asyncStorage
+  const fetchUserDataFromAsyncStorage = async () => {
+    try {
+      const storedUserData = await AsyncStorage.getItem('userDetails');
+      if (storedUserData) {
+        const parsedUserData = JSON.parse(storedUserData);
+        setUserData(parsedUserData);
+      } else {
+        console.error('User data not found in AsyncStorage');
+      }
+
+    } catch (error) {
+      console.error('Error fetching user data:', error.message);
+
+    }
+  };
+  useEffect(() => {
+    fetchUserDataFromAsyncStorage();
+  }, []);
+
   return (
     <>
       <Center bg={Colors.main} pt={10} pb={6}>
-        <Image
-          source={{ uri: "https://images.rawpixel.com/image_png_1300/czNmcy1wcml2YXRlL3Jhd3BpeGVsX2ltYWdlcy93ZWJzaXRlX2NvbnRlbnQvbHIvdjkzNy1hZXctMTM5LnBuZw.png" }}
-          alt='Profile'
-          w={24}
-          h={24}
-          resizeMode='cover'
-        />
-        <Heading bold fontSize={16} isTruncated my={2} color={Colors.white}>
-          Profile
+        <Heading bold fontSize={24} isTruncated my={2} color={Colors.orange}>
+          Profile : {userData.name}
         </Heading>
-        <Text italic fontSize={14} color={Colors.white}>
-          Joined Dec 12 2023
+        <Text bold fontSize={16} color={Colors.orange}>
+          ID Created : {new Date(userData.createdAt).toLocaleString()}
         </Text>
       </Center>
 
-      {/* Profile Tabs */}
+      {/* Render Profile Tabs */}
       <ProfileTabs />
     </>
-
   )
 }
 

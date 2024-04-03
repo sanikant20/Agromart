@@ -1,48 +1,144 @@
-import React, { useEffect, useState } from 'react';
-import { ScrollView, Text, Pressable, Flex, Box, Image, Heading, Button, Center, View, HStack, Spinner } from 'native-base';
+import React, { useEffect, useState, useCallback } from 'react';
+import { ScrollView, Text, Pressable, Flex, Box, Image, Button, Center, HStack, Spinner } from 'native-base';
 import Colors from "../../colors";
 import CartEmpty from './CartEmpty';
-import Buttone from '../Buttone';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 var Buffer = require('buffer/').Buffer;
+import { RefreshControl } from 'react-native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 
-const CartItems = ({ navigation }) => {
+// Function to fetch cart products from API
+const fetchCartProductsFromAPI = async (userData, setCart, setLoading, setError) => {
+    try {
+        setLoading(true);
+        const response = await fetch(`http://192.168.56.1:5000/api/CartData/${userData._id}`);
+        if (!response.ok) {
+            throw new Error("Failed to fetch cart products data");
+        }
+        const result = await response.json();
+        if (result.data) {
+            setCart(result.data);
+        } else {
+            setCart([]);
+        }
+        setLoading(false);
+    } catch (error) {
+        console.error('Error fetching cart products:', error.message);
+        setError("Failed to fetch products data. Please try again later.");
+        setLoading(false);
+    }
+};
+
+const CartItems = () => {
     const [cart, setCart] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [userData, setUserData] = useState({});
+    const [refreshing, setRefreshing] = useState(false);
+    const isFocused = useIsFocused();
+    const navigation = useNavigation();
 
-    useEffect(() => {
-        const getCartProducts = async () => {
-            try {
-                const response = await fetch('http://192.168.56.1:5000/api/CartData');
-                if (!response.ok) {
-                    throw new Error("Failed to fetch products data");
-                }
-                const result = await response.json();
-                if (result.data) {
-                    setCart(result.data);
-                } else {
-                    setCart([]);
-                }
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching cart products:', error.message);
-                setError("Failed to fetch products data. Please try again later.");
-                setLoading(false);
+    // Function to fetch user data from AsyncStorage
+    const fetchUserDataFromAsyncStorage = async () => {
+        try {
+            const storedUserData = await AsyncStorage.getItem('userDetails');
+            if (storedUserData) {
+                const parsedUserData = JSON.parse(storedUserData);
+                setUserData(parsedUserData);
+            } else {
+                console.error('User data not found in AsyncStorage');
             }
-        };
-        getCartProducts();
+        } catch (error) {
+            console.error('Error fetching user data:', error.message);
+        }
+    };
+
+    // Function to handle refreshing cart data
+    const onRefresh = useCallback(() => {
+        setRefreshing(true);
+        fetchCartProductsFromAPI(userData, setCart, setLoading, setError);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 2000);
+    }, [userData]);
+
+    // Fetch user data from AsyncStorage when component mounts
+    useEffect(() => {
+        fetchUserDataFromAsyncStorage();
     }, []);
 
-    
+    // Fetch cart products when component is focused
+    useEffect(() => {
+        if (isFocused && Object.keys(userData).length > 0) {
+            fetchCartProductsFromAPI(userData, setCart, setLoading, setError);
+        }
+    }, [isFocused, userData]);
+
+    // Function to handle deletion of cart product
+    const handleDeleteProduct = async (cartProductId) => {
+        try {
+            const response = await fetch(`http://192.168.56.1:5000/api/deleteCartProducts/${cartProductId}`, {
+                method: "DELETE"
+            });
+            if (!response.ok) {
+                throw new Error(`Failed to delete cart product. Status: ${response.status}`);
+            }
+            // Remove the deleted product from the cart state
+            const updatedCart = cart.filter(item => item._id !== cartProductId);
+            setCart(updatedCart);
+        } catch (error) {
+            console.error('Error deleting cart product:', error.message);
+        }
+    };
+
+
+    // Handle checkout to place order
+    const handleCheckout = async () => {
+        try {
+            // Filter out image data from the cart
+            const cartWithoutImages = cart.map(item => {
+                const { image, ...rest } = item;
+                return rest;
+            });
+
+            const orderResponse = await fetch("http://192.168.56.1:5000/api/placeOrder", {
+                method: "POST",
+                body: JSON.stringify({ user_id: userData._id, user_email: userData.email, cart: cartWithoutImages }), // Send cart without image data
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            console.log("Status :", orderResponse.status);
+
+            if (!orderResponse.ok) {
+                const errorMessage = await orderResponse.text();
+                throw new Error(`Failed to place order. Error: ${errorMessage}`);
+            }
+
+            const orderData = await orderResponse.json();
+            console.log("Order Data:", orderData);
+            // Display order placed successful message
+             alert(orderData.message);
+            navigation.navigate('ShippingDetails');
+        } catch (error) {
+            console.error("Error placing order:", error.message);
+            alert(error.message);
+        }
+    };
+
+
+
 
     // Function to convert Buffer to base64
     const bufferToBase64 = (buffer) => {
         return Buffer.from(buffer).toString('base64');
     };
 
-    // Calculate total price
-    const total = cart.reduce((acc, curr) => acc + curr.price * curr.quantity, 0);
+    // Calculate total price of cart items
+    const TotalPrice = cart ? cart.reduce((acc, curr) => acc + curr.price * curr.quantity, 0) : 0;
 
+    // Render loading spinner while data is being fetched
     if (loading) {
         return (
             <Box h="full" bg={Colors.white} px={5} justifyContent="center" alignItems="center">
@@ -52,6 +148,7 @@ const CartItems = ({ navigation }) => {
         );
     }
 
+    // Render error message if there's an error
     if (error) {
         return (
             <Center flex={1}>
@@ -60,6 +157,7 @@ const CartItems = ({ navigation }) => {
         );
     }
 
+    // Render cart items if cart is not empty
     if (cart.length === 0) {
         return (
             <ScrollView flex={1} showsVerticalScrollIndicator={false}>
@@ -68,8 +166,11 @@ const CartItems = ({ navigation }) => {
         );
     }
 
+    // Render cart items
     return (
-        <ScrollView flex={1} showsVerticalScrollIndicator={false}>
+        <ScrollView flex={1} showsVerticalScrollIndicator={false}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        >
             <Box px={5}>
                 {cart.map((cartProduct) => (
                     <Pressable
@@ -105,7 +206,6 @@ const CartItems = ({ navigation }) => {
                             </Box>
                             <Flex direction="row" alignItems="center">
                                 <Button
-                                    onPress={() => handleUpdateQuantity(cartProduct._id)}
                                     bg={Colors.main}
                                     color={Colors.white}
                                     _pressed={{ bg: Colors.main }}
@@ -125,7 +225,6 @@ const CartItems = ({ navigation }) => {
                                     Delete
                                 </Button>
                             </Flex>
-
                         </Flex>
                     </Pressable>
                 ))}
@@ -141,7 +240,7 @@ const CartItems = ({ navigation }) => {
                         h={45}
                         alignItems="center"
                     >
-                        <Text fontSize="xl" bold>Total :</Text>
+                        <Text fontSize="xl" bold>Total Price :</Text>
                         <Button
                             px={10}
                             h={45}
@@ -156,16 +255,15 @@ const CartItems = ({ navigation }) => {
                                 bg: Colors.main
                             }}
                         >
-                            <Text>Rs {total}</Text>
+                            <Text>Rs {TotalPrice}</Text>
                         </Button>
                     </HStack>
-
-
                     <Button
                         roundedBottomLeft={50}
                         roundedBottomRight={50}
                         onPress={() => handleCheckout()}
                         mt={4}
+                        mb={10}
                         w={'90%'}
                         bg={Colors.main}
                         _pressed={{ bg: Colors.main }}
