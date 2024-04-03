@@ -1,32 +1,32 @@
 const mongoose = require('mongoose');
-const { Schema } = mongoose;
 
-// Schema for the new user registration
-const UserSchema = new Schema(
+const ShippingSchema = new mongoose.Schema(
     {
-        name: {
+        userId: {
             type: String,
             required: true
         },
-        role: {
-            type: String,
-            required: true,
-            enum: ['Admin', 'admin', 'user', 'User']
-        },
-        location: {
+        userName:{
             type: String,
             required: true
         },
-        email: {
+        country: {
             type: String,
             required: true
         },
-        password: {
+        city: {
             type: String,
             required: true
-        }
+        },
+        postalCode: {
+            type: String,
+        },
+        address: {
+            type: String,
+            required: true
+        },
     },
     { timestamps: true }
 );
 
-module.exports = mongoose.model('user', UserSchema);
+module.exports = mongoose.model("Shipping", ShippingSchema);

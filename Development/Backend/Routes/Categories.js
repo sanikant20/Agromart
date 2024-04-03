@@ -34,7 +34,8 @@ router.get("/category", async (req, resp) => {
     try {
         let allCategory = await Categories.find()
         if (allCategory.length > 0) {
-            resp.status(200).send(allCategory)
+            console.log("number of cat:", allCategory.length)
+            resp.status(200).send({success: true,  allCategory, totalCategory: allCategory.length})
         } else {
             resp.status(404).send({ result: "No category found." })
         }
@@ -78,6 +79,7 @@ router.put('/category/:id', async (req, resp) => {
     }
 })
 
+// APi to delete category
 router.delete('/delete/:id', async (req, resp) => {
     try {
         const categoryID = req.params.id;
@@ -96,5 +98,19 @@ router.delete('/delete/:id', async (req, resp) => {
         resp.status(500).send({ error: "Internal Server Error" })
     }
 })
+
+// API to search category
+router.get("/search/:key", async (req, resp) => {
+    try {
+        let result = await Categories.find({
+            "$or": [
+                { categoryName: { $regex: req.params.key, $options: 'i' } },
+            ]
+        });
+        resp.send(result);
+    } catch (error) {
+        resp.status(500).send({ error: 'Internal Server Error' });
+    }
+});
 
 module.exports = router;

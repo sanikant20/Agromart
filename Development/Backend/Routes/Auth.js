@@ -1,18 +1,17 @@
 const express = require('express');
 const app = express()
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+
 app.use(express.json())
 const router = express.Router();
 const User = require("../Models/User");
-
+require("dotenv").config();
 router.use(express.json());
 
-const bcrypt = require('bcrypt');
-const SALT = 10;
-const jwt = require('jsonwebtoken');
-const jwtKey = 'eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTY5MTU1MTMwNCwiaWF0IjoxNjkxNTUxMzA0fQ.JBLvqDC6E5fuaGtSQlzHUyBaKg5Y3MWnF3QZj0bKIBg';
 
 
-// API to check existing email
+// API to check existing email to prevent same email register 
 router.post('/check-email', async (req, res) => {
     const { email } = req.body;
 
@@ -32,11 +31,13 @@ router.post('/check-email', async (req, res) => {
 // API for the registration of new user
 router.post("/register", async (req, resp) => {
     try {
-        const { name, role, location, email, password} = req.body;
+        const { name, role, location, email, password } = req.body;
 
-        // Hash the password
-        const hashPassword = await bcrypt.hash(password, SALT);
+        // Generate salt value using bcrypt
+        const salt = await bcrypt.genSalt(10);
 
+        // Hash the password using the generated salt
+        const hashPassword = await bcrypt.hash(password, salt);
         // Create a new user with the hashed password
         const user = new User({
             name,
@@ -52,7 +53,7 @@ router.post("/register", async (req, resp) => {
         delete result.password;
 
         // Create and send a JWT token
-        jwt.sign({ result }, jwtKey, { expiresIn: '2h' }, (err, token) => {
+        jwt.sign({ result }, `${process.env.JWT_KEY}`, { expiresIn: '2h' }, (err, token) => {
             if (err) {
                 resp.status(500).send("Something wrong, Please try later...");
             }
@@ -86,7 +87,7 @@ router.post("/login", async (req, resp) => {
 
                 if (isPasswordMatch) {
                     // IF Passwords match, generate and send JWT token
-                    jwt.sign({ user }, jwtKey, { expiresIn: '2h' }, (err, token) => {
+                    jwt.sign({ user }, `${process.env.JWT_KEY}`, { expiresIn: '2h' }, (err, token) => {
                         if (err) {
                             resp.status(500).send("Something wrong, Please try later...");
                         }
@@ -94,7 +95,7 @@ router.post("/login", async (req, resp) => {
                             // Log the decoded payload for debugging
                             const decoded = jwt.decode(token);
                             // console.log('Decoded Token:', decoded);
-                            resp.send({ user, auth: token }); 
+                            resp.send({ user, auth: token });
                         }
                     });
                 } else {
@@ -132,7 +133,7 @@ router.post("/changePassword/:id", async (req, resp) => {
             return resp.send({ result: "new password & confirm password doesn't matched." })
         }
 
-        const hashNewPassword = await bcrypt.hash(newPassword, SALT)
+        const hashNewPassword = await bcrypt.hash(newPassword, `${process.env.SALT}`)
 
         // Update the user's password in the database
         user.password = hashNewPassword;
