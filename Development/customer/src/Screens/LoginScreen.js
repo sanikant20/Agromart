@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Colors from "../colors";
 import { Box, Heading, Input, VStack, Image, Button, Text } from 'native-base';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import apiUrl from '../../apiconfig';
 
 function LoginScreen() {
   const navigation = useNavigation();
@@ -21,7 +22,7 @@ function LoginScreen() {
         return;
       }
 
-      const response = await fetch("http://192.168.56.1:5000/api/login", {
+      const response = await fetch(`${apiUrl}/login`, {
         method: 'POST',
         body: JSON.stringify({ email, password }),
         headers: {
@@ -41,7 +42,7 @@ function LoginScreen() {
         return;
       }
 
-      console.log("USer data:", result);
+      console.log("User data:", result);
       // Store user details in AsyncStorage
       await AsyncStorage.setItem('userDetails', JSON.stringify(result.user));
       // Reset input fields
@@ -70,9 +71,7 @@ function LoginScreen() {
       </Image>
 
       <Box w='full' h="full" position="absolute" top="0" px="6" justifyContent="center">
-
         <Heading>Login</Heading>
-
         <VStack space={5} pt="6">
           {/* Email or username */}
           <Input

@@ -5,6 +5,7 @@ import Colors from '../../colors';
 import Buttone from '../Buttone';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { RefreshControl } from 'react-native';
+import apiUrl from '../../../apiconfig';
 
 const Inputs = [
   {
@@ -53,13 +54,13 @@ const Profile = () => {
   const fetchUserDataFromAPI = async () => {
     try {
       if (!userData._id) {
-        alert("Page refresh.")
+        // alert("Page refresh.")
         return;
       }
 
       const userID = userData._id;
       console.log("User ID", userID);
-      const response = await fetch(`http://192.168.56.1:5000/api/userData/${userID}`);
+      const response = await fetch(`${apiUrl}/userData/${userID}`);
 
       if (response.ok) {
         const userDataFromAPI = await response.json();
@@ -173,7 +174,7 @@ const Profile = () => {
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
-        <VStack space={10} mt={3} pb={10}>
+        <VStack space={10} mt={1} pb={10}>
           {Inputs.map(renderInputField)}
           <Button onPress={handleProfileDataUpdate}
             bg={Colors.main}

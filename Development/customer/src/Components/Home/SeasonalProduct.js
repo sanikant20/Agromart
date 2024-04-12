@@ -3,17 +3,18 @@ import { Box, Flex, Heading, Image, Pressable, ScrollView, Text, Button } from '
 import Colors from '../../colors';
 import { useNavigation } from '@react-navigation/native';
 var Buffer = require('buffer/').Buffer;
+import apiUrl from '../../../apiconfig';
 
 const SeasonalProduct = () => {
     const navigation = useNavigation();
-    const [visibleSeasonalProducts, setVisibleSeasonalProducts] = useState(2);
+    const [visibleSeasonalProducts, setVisibleSeasonalProducts] = useState(4);
     const [loading, setLoading] = useState(null)
     const [seasonalData, setSeasonalData] = useState([]);
 
     useEffect(() => {
         const getSeasonalProduct = async () => {
             try {
-                const response = await fetch("http:192.168.56.1:5000/api/seasonalProduct");
+                const response = await fetch(`${apiUrl}/seasonalProduct`);
                 if (!response.ok) {
                     throw new Error({ success: false, message: "Error in fetching api", error })
                 }

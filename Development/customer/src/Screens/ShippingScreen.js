@@ -3,13 +3,9 @@ import React, { useEffect, useState } from 'react'
 import Colors from '../colors';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import apiUrl from '../../apiconfig';
 
 const shippingInputs = [
-  {
-    label: "Enter Country",
-    type: "text",
-    stateKey: "country"
-  },
   {
     label: "Enter City",
     type: "text",
@@ -30,7 +26,6 @@ const shippingInputs = [
 function ShippingScreen() {
   const [shipping, setShipping] = useState('');
   const [userData, setUserData] = useState({});
-  const [country, setCountry] = useState('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
   const [address, setAddress] = useState('');
@@ -56,7 +51,6 @@ function ShippingScreen() {
 
     // Clear input fields when navigating from another screen
     const unsubscribe = navigation.addListener('focus', () => {
-      setCountry('');
       setCity('');
       setPostalCode('');
       setAddress('');
@@ -68,15 +62,14 @@ function ShippingScreen() {
 
   const HandleShipping = async () => {
     try {
-      const response = await fetch(`http://192.168.56.1:5000/api/shippingDetails/${userData._id}`, {
+      const response = await fetch(`${apiUrl}/addShippingDetails`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
           userId: userData._id,
-          userName: userData.name,
-          country,
+          username: userData.name,
           city,
           postalCode,
           address
@@ -94,16 +87,14 @@ function ShippingScreen() {
       navigation.navigate('Payment');
     } catch (error) {
       console.error("Error adding shipping details:", error);
-      // Handle error here
+
     }
   };
 
 
   const validateInputs = () => {
     const errors = {};
-    if (!country.trim()) {
-      errors.country = <Text style={{ color: 'red' }}>Country is required</Text>;
-    }
+
     if (!city.trim()) {
       errors.city = <Text style={{ color: 'red' }}>City is required</Text>;
     }
@@ -155,9 +146,6 @@ function ShippingScreen() {
                   }}
                   onChangeText={(text) => {
                     switch (input.stateKey) {
-                      case 'country':
-                        setCountry(text);
-                        break;
                       case 'city':
                         setCity(text);
                         break;
@@ -171,10 +159,10 @@ function ShippingScreen() {
                         break;
                     }
                   }}
-                  value={input.stateKey === 'country' ? country :
-                         input.stateKey === 'city' ? city :
-                         input.stateKey === 'postalCode' ? postalCode :
-                         address}
+                  value={
+                    input.stateKey === 'city' ? city :
+                      input.stateKey === 'postalCode' ? postalCode :
+                        address}
                 />
                 {errors[input.stateKey] && (
                   <Text color="red" fontSize="sm">{errors[input.stateKey]}</Text>
@@ -183,21 +171,24 @@ function ShippingScreen() {
             ))}
 
             <Button
-              onPress={() => {
-                if (validateInputs()) {
-                  HandleShipping();
-                }
-              }}
-              marginBottom={10}
+              onPress={() => { if (validateInputs()) { HandleShipping(); } }}
               rounded={50}
-              bg={Colors.main} color={Colors.white} mt={5}>
+              bg={Colors.main} color={Colors.white} mt={5}
+            >
               Proceed
             </Button>
-           
+            {/* <Button
+              onPress={() => { navigation.navigate('Payment'); }}
+              marginBottom={10}
+              rounded={50}
+              bg={Colors.main} color={Colors.white} mt={5}
+            >
+              Alredy Provided
+            </Button> */}
           </VStack>
         </ScrollView>
       </Box>
-    </Box>
+    </Box >
   )
 }
 

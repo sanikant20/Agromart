@@ -6,28 +6,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 var Buffer = require('buffer/').Buffer;
 import { RefreshControl } from 'react-native';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
-
-// Function to fetch cart products from API
-const fetchCartProductsFromAPI = async (userData, setCart, setLoading, setError) => {
-    try {
-        setLoading(true);
-        const response = await fetch(`http://192.168.56.1:5000/api/CartData/${userData._id}`);
-        if (!response.ok) {
-            throw new Error("Failed to fetch cart products data");
-        }
-        const result = await response.json();
-        if (result.data) {
-            setCart(result.data);
-        } else {
-            setCart([]);
-        }
-        setLoading(false);
-    } catch (error) {
-        console.error('Error fetching cart products:', error.message);
-        setError("Failed to fetch products data. Please try again later.");
-        setLoading(false);
-    }
-};
+import { useCartContext } from './CartContext';
+import apiUrl from '../../../apiconfig';
 
 const CartItems = () => {
     const [cart, setCart] = useState([]);
@@ -37,19 +17,49 @@ const CartItems = () => {
     const [refreshing, setRefreshing] = useState(false);
     const isFocused = useIsFocused();
     const navigation = useNavigation();
+    const { updateCartItemCount } = useCartContext();
 
-    // Function to fetch user data from AsyncStorage
-    const fetchUserDataFromAsyncStorage = async () => {
-        try {
-            const storedUserData = await AsyncStorage.getItem('userDetails');
-            if (storedUserData) {
-                const parsedUserData = JSON.parse(storedUserData);
-                setUserData(parsedUserData);
-            } else {
-                console.error('User data not found in AsyncStorage');
+    // Fetch user data from AsyncStorage when component mounts
+    useEffect(() => {
+        // Function to fetch user data from AsyncStorage
+        const fetchUserDataFromAsyncStorage = async () => {
+            try {
+                const storedUserData = await AsyncStorage.getItem('userDetails');
+                if (storedUserData) {
+                    const parsedUserData = JSON.parse(storedUserData);
+                    setUserData(parsedUserData);
+                } else {
+                    console.error('User data not found in AsyncStorage');
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error.message);
             }
+        };
+
+        fetchUserDataFromAsyncStorage();
+    }, []);
+
+    // Function to fetch cart products from API
+    const fetchCartProductsFromAPI = async () => {
+        try {
+            setLoading(true);
+            const response = await fetch(`${apiUrl}/CartData/${userData._id}`);
+            if (!response.ok) {
+                throw new Error("Failed to fetch cart products data");
+            }
+            const result = await response.json();
+            if (result.data) {
+                setCart(result.data);
+                updateCartItemCount(result.data.length);
+            } else {
+                setCart([]);
+                updateCartItemCount(0);
+            }
+            setLoading(false);
         } catch (error) {
-            console.error('Error fetching user data:', error.message);
+            console.error('Error fetching cart products:', error.message);
+            setError("Failed to fetch products data. Please try again later.");
+            setLoading(false);
         }
     };
 
@@ -62,10 +72,6 @@ const CartItems = () => {
         }, 2000);
     }, [userData]);
 
-    // Fetch user data from AsyncStorage when component mounts
-    useEffect(() => {
-        fetchUserDataFromAsyncStorage();
-    }, []);
 
     // Fetch cart products when component is focused
     useEffect(() => {
@@ -77,7 +83,7 @@ const CartItems = () => {
     // Function to handle deletion of cart product
     const handleDeleteProduct = async (cartProductId) => {
         try {
-            const response = await fetch(`http://192.168.56.1:5000/api/deleteCartProducts/${cartProductId}`, {
+            const response = await fetch(`${apiUrl}/deleteCartProducts/${cartProductId}`, {
                 method: "DELETE"
             });
             if (!response.ok) {
@@ -86,11 +92,11 @@ const CartItems = () => {
             // Remove the deleted product from the cart state
             const updatedCart = cart.filter(item => item._id !== cartProductId);
             setCart(updatedCart);
+            updateCartItemCount(updatedCart.length); // Update cart item count
         } catch (error) {
             console.error('Error deleting cart product:', error.message);
         }
     };
-
 
     // Handle checkout to place order
     const handleCheckout = async () => {
@@ -101,9 +107,9 @@ const CartItems = () => {
                 return rest;
             });
 
-            const orderResponse = await fetch("http://192.168.56.1:5000/api/placeOrder", {
+            const orderResponse = await fetch(`${apiUrl}/placeOrder`, {
                 method: "POST",
-                body: JSON.stringify({ user_id: userData._id, user_email: userData.email, cart: cartWithoutImages }), // Send cart without image data
+                body: JSON.stringify({ user_id: userData._id, user_email: userData.email, cart: cartWithoutImages }),
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -119,7 +125,7 @@ const CartItems = () => {
             const orderData = await orderResponse.json();
             console.log("Order Data:", orderData);
             // Display order placed successful message
-             alert(orderData.message);
+            alert(orderData.message);
             navigation.navigate('ShippingDetails');
         } catch (error) {
             console.error("Error placing order:", error.message);
@@ -127,8 +133,9 @@ const CartItems = () => {
         }
     };
 
-
-
+    const handleMainPage = () => {
+        navigation.navigate("Main")
+    }
 
     // Function to convert Buffer to base64
     const bufferToBase64 = (buffer) => {
@@ -157,7 +164,7 @@ const CartItems = () => {
         );
     }
 
-    // Render cart items if cart is not empty
+    // Render cart items if cart is empty
     if (cart.length === 0) {
         return (
             <ScrollView flex={1} showsVerticalScrollIndicator={false}>
@@ -189,19 +196,22 @@ const CartItems = () => {
                                 <Image
                                     source={{ uri: `data:image/png;base64,${bufferToBase64(cartProduct.image.data)}` }}
                                     accessibilityLabel={cartProduct.name}
-                                    alt={cartProduct.name}
-                                    w={20}
-                                    h={20}
-                                    resizeMode="contain"
+                                    alt={"image"}
+                                    w='20%'
+                                    h={90}
+                                    resizeMode='cover'
                                     onError={(error) => console.log(`Image load error: ${error.nativeEvent.error}`)}
                                 />
                             )}
                             <Box px={4} pt={1} flex={1} direction="row">
-                                <Text bold fontSize={16} isTruncated>
-                                    Name: {cartProduct.name}
+                                <Text fontSize={12} isTruncated>
+                                    {cartProduct.name}
                                 </Text>
-                                <Text bold fontSize={16} isTruncated>
-                                    Price: {cartProduct.price}
+                                <Text fontSize={12} isTruncated>
+                                    Rs {cartProduct.price}
+                                </Text>
+                                <Text fontSize={12} isTruncated>
+                                    {cartProduct.category}
                                 </Text>
                             </Box>
                             <Flex direction="row" alignItems="center">
@@ -263,12 +273,24 @@ const CartItems = () => {
                         roundedBottomRight={50}
                         onPress={() => handleCheckout()}
                         mt={4}
-                        mb={10}
+                        mb={3}
                         w={'90%'}
                         bg={Colors.main}
                         _pressed={{ bg: Colors.main }}
                         _text={{ color: Colors.white }}>
                         Checkout
+                    </Button>
+                    <Button
+                        roundedBottomLeft={50}
+                        roundedBottomRight={50}
+                        onPress={() => handleMainPage()}
+                        mt={4}
+                        mb={10}
+                        w={'90%'}
+                        bg={Colors.blue}
+                        _pressed={{ bg: Colors.main }}
+                        _text={{ color: Colors.white }}>
+                        Back to home
                     </Button>
                 </Center>
             </Box>

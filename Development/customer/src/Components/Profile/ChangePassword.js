@@ -3,6 +3,7 @@ import { ScrollView, VStack, FormControl, Text, Input, Button, Box } from 'nativ
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Colors from '../../colors';
 import { useNavigation } from '@react-navigation/native';
+import apiUrl from '../../../apiconfig';
 
 const Inputs = [
     {
@@ -55,7 +56,7 @@ const ChangePassword = () => {
                 setNewPasswordError("");
             }
 
-            const response = await fetch("http://192.168.56.1:5000/api/changeUserPassword", {
+            const response = await fetch(`${apiUrl}/changeUserPassword`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'
@@ -137,16 +138,14 @@ const ChangePassword = () => {
                     {Inputs.map(renderInputField)}
                     <Button
                         onPress={handleChangePassword}
-                        bg={Colors.main}
-                        colorScheme="white"
+                        bg={Colors.main} color={Colors.white}
                         borderRadius="50px"
                     >
                         Update
                     </Button>
                     <Button
                         onPress={handleCancelChangePassword}
-                        bg={Colors.red}
-                        colorScheme="white"
+                        bg={Colors.red} color={Colors.white}
                         borderRadius="50px"
                     >
                         Cancel

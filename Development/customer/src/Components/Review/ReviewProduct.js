@@ -4,6 +4,7 @@ import Colors from '../../colors';
 import Rating from './Rating';
 import ReviewMessage from '../../Message/ReviewMessage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import apiUrl from '../../../apiconfig';
 
 const ReviewProduct = ({ productId }) => {
   const [rating, setRating] = useState("");
@@ -32,7 +33,7 @@ const ReviewProduct = ({ productId }) => {
   // Fetch review data
   const fetchReviewData = async () => {
     try {
-      const response = await fetch(`http://192.168.56.1:5000/api/getReview/${productId}`);
+      const response = await fetch(`${apiUrl}/getReview/${productId}`);
       if (!response.ok) {
         throw new Error("Failed to fetch rating and review data");
       }
@@ -52,7 +53,7 @@ const ReviewProduct = ({ productId }) => {
         alert('Please fill either the rating or the review.');
         return;
       }
-      const response = await fetch("http://192.168.56.1:5000/api/addReview", {
+      const response = await fetch(`${apiUrl}/addReview`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -109,7 +110,7 @@ const ReviewProduct = ({ productId }) => {
           </Heading>
           <Rating value={review.rate} />
           <Text my={2} fontSize={14}>
-            Review At:  {new Date(review.date).toLocaleString()}
+            At:  {new Date(review.date).toLocaleString()}
           </Text>
           <ReviewMessage
             color={Colors.black}
@@ -163,7 +164,7 @@ const ReviewProduct = ({ productId }) => {
               <Select.Item label='5 - Excellent' value='5' />
             </Select>
           </FormControl>
-          
+
           <FormControl>
             <FormControl.Label
               _text={{

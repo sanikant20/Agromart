@@ -5,11 +5,11 @@ import { Box, Heading, Input, VStack, Image, Button, Text } from 'native-base';
 import { MaterialIcons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import apiUrl from '../../apiconfig';
 
 function RegisterScreen() {
   const navigation = useNavigation();
   const [name, setName] = useState("");
-  const [role, setRole] = useState("user");
   const [location, setLocation] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,7 +18,7 @@ function RegisterScreen() {
   // Check email api
   const checkEmailExistence = async () => {
     try {
-      const checkResponse = await fetch("http://192.168.1.77:5000/api/check-email", {
+      const checkResponse = await fetch(`${apiUrl}/check-email`, {
         method: "POST",
         body: JSON.stringify({ email: email }),
         headers: {
@@ -43,6 +43,11 @@ function RegisterScreen() {
       return;
     }
 
+    // Password length validation
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long.');
+      return;
+    }
     // Create new user
     try {
       setError('');
@@ -52,24 +57,22 @@ function RegisterScreen() {
       }
 
       // Fetching the server with a POST request for signup
-      let result = await fetch('http://192.168.1.77:5000/api/register', {
+      let result = await fetch(`${apiUrl}/register`, {
         method: 'POST',
-        body: JSON.stringify({ name, role, location, email, password }),
+        body: JSON.stringify({ name, role: 'user', location, email, password }),
         headers: {
           'Content-Type': 'application/json'
         }
       });
       result = await result.json();
-      console.log(result);
-
       navigation.navigate('Login');
-
     } catch (error) {
       console.error("Error:", error);
       setError('An error occurred while registering.');
     }
   };
 
+  // Navigate to login page
   const AlreadySignup = () => {
     navigation.navigate('Login');
   };
@@ -84,9 +87,7 @@ function RegisterScreen() {
       </Image>
 
       <Box w='full' h="full" position="absolute" top="0" px="6" justifyContent="center">
-
         <Heading>Sign Up</Heading>
-
         <VStack space={5} pt="6">
           {/* Name */}
           <Input
@@ -141,6 +142,7 @@ function RegisterScreen() {
         {error && (
           <Text style={{ color: "red" }}>{error}</Text>
         )}
+        
         <Button
           _pressed={{ bg: Colors.main }}
           my={15}

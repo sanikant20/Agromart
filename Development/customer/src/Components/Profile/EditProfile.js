@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Box, Button, FormControl, Input, Text, ScrollView, Spinner, VStack } from 'native-base';
 import Colors from '../../colors';
+import apiUrl from '../../../apiconfig';
 
 const Inputs = [
     {
@@ -50,7 +51,7 @@ const EditProfile = () => {
 
     const HandleUpdateProfile = async () => {
         try {
-            const response = await fetch(`http://192.168.56.1:5000/api/editUserProfile/${userData._id}`, {
+            const response = await fetch(`${apiUrl}/editUserProfile/${userData._id}`, {
                 method: "PUT",
                 body: JSON.stringify(userData),
                 headers: {

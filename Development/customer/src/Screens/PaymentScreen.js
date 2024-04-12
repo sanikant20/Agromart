@@ -4,27 +4,35 @@ import Buttone from '../Components/Buttone';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import Colors from '../colors';
 import { useNavigation } from '@react-navigation/native';
-
+// import khalti from '../Components/KhaltiPayment/Khalti';
 
 const paymentMethod = [
   {
     image: require("../../assets/KhaltiLogo.png"),
     alt: "Khalti",
     icons: "Ionicons"
-  },
-  {
-    image: require("../../assets/EsewaLogo.png"),
-    alt: "E-Sewa",
-    icons: "Ionicons"
   }
+  // ,
+  // {
+  //   // image: require("../../assets/EsewaLogo.png"),
+  //   // alt: "E-Sewa",
+  //   // icons: "Ionicons"
+  //   value : "COD"
+  // }
 ];
 
 function PaymentScreen() {
   const navigation = useNavigation();
 
   const HandlePaymentMethod = () => {
-    console.log("payment")
-    navigation.navigate('Main')
+    try {
+      // const paymentResponse = await axi
+      console.log("payment method")
+      navigation.navigate('Main')
+    } catch (error) {
+
+    }
+
   }
   return (
     <Box flex={1} safeArea bg={Colors.main} py={5}>

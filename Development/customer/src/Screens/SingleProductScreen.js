@@ -9,6 +9,7 @@ import ReviewProduct from '../Components/Review/ReviewProduct';
 import Rating from '../Components/Review/Rating';
 import SimilarProduct from '../Components/Products/SimilarProduct';
 var Buffer = require('buffer/').Buffer;
+import apiUrl from '../../apiconfig';
 
 function SingleProductScreen({ route }) {
   const { id } = route.params;
@@ -22,15 +23,15 @@ function SingleProductScreen({ route }) {
 
   const navigation = useNavigation();
 
-
   useEffect(() => {
     const getProductDetails = async () => {
       try {
-        let response = await fetch(`http://192.168.56.1:5000/api/products/${id}`);
+        let response = await fetch(`${apiUrl}/products/${id}`);
 
         if (!response.ok) {
           throw new Error(`Failed to fetch product details. Status: ${response.status}`);
         }
+
         let result = await response.json();
         setProduct(result);
         setTotalPrice(result.price);
@@ -40,7 +41,7 @@ function SingleProductScreen({ route }) {
         fetchSimilarProducts(result.category);
 
         // Fetch average rating
-        let ratingResponse = await fetch(`http://192.168.56.1:5000/api/getReview/${id}`);
+        let ratingResponse = await fetch(`${apiUrl}/getReview/${id}`);
         if (!ratingResponse.ok) {
           throw new Error(`Failed to fetch average rating. Status: ${ratingResponse.status}`);
         }
@@ -60,7 +61,7 @@ function SingleProductScreen({ route }) {
   // Function to fetch similar products based on category
   const fetchSimilarProducts = async (category) => {
     try {
-      let response = await fetch(`http://192.168.56.1:5000/api/products?category=${category}`);
+      let response = await fetch(`${apiUrl}/products?category=${category}`);
 
       if (!response.ok) {
         throw new Error(`Failed to fetch similar products. Status: ${response.status}`);
@@ -126,21 +127,16 @@ function SingleProductScreen({ route }) {
   const addToCart = async () => {
     try {
       const formData = createFormData();
-      const response = await fetch("http://192.168.56.1:5000/api/AddToCart", {
+      const response = await fetch(`${apiUrl}/AddToCart`, {
         method: "POST",
         body: formData,
       });
       const data = await response.json();
       console.log(data);
       alert("Product added to cart successfully!")
-      navigation.navigate("Main")
+      navigation.navigate("Cart")
     } catch (error) {
-      console.error("Error adding product to cart:", error.message);
-      if (error.message === 'Product not found') {
-        alert("Product not found. Please try again later.");
-      } else {
-        alert("Failed to add product to cart. Please try again later.");
-      }
+      navigation.navigate('Cart');
     }
   };
 
@@ -179,56 +175,66 @@ function SingleProductScreen({ route }) {
         </Heading>
         <Rating value={averageRating} />
 
-        <HStack space={2} alignItems="center" my={5}>
-
-          <NumericInput
-            value={quantity}
-            onChange={value => {
-              if (value <= 0) {
-                setQuantity(0);
-              } else {
-                setQuantity(value);
-              }
-            }}
-            totalWidth={140}
-            totalHeight={40}
-            iconSize={25}
-            step={1}
-            maxValue={product.quantity}
-            minValue={1}
-            borderColor={Colors.deepGray}
-            rounded
-            textColor={Colors.black}
-            iconStyle={{ color: Colors.white }}
-            rightButtonBackgroundColor={Colors.main}
-            leftButtonBackgroundColor={Colors.main}
-          />
-          <Spacer />
-          <Heading color={Colors.black}>Rs: {totalPrice}</Heading>
-        </HStack>
+        {product.quantity === 0 ? (
+          <Text fontSize={16} color={Colors.red} textAlign="left" mt={5} bold>Out of Stock</Text>
+        ) : (
+          <HStack space={2} alignItems="center" my={5}>
+            <NumericInput
+              value={quantity}
+              onChange={value => {
+                if (value <= 0) {
+                  setQuantity(0);
+                } else {
+                  setQuantity(value);
+                }
+              }}
+              totalWidth={140}
+              totalHeight={40}
+              iconSize={25}
+              step={1}
+              maxValue={product.quantity}
+              minValue={1}
+              borderColor={Colors.deepGray}
+              rounded
+              textColor={Colors.black}
+              iconStyle={{ color: Colors.white }}
+              rightButtonBackgroundColor={Colors.main}
+              leftButtonBackgroundColor={Colors.main}
+            />
+            <Spacer />
+            <Heading color={Colors.black}>Rs: {totalPrice}</Heading>
+          </HStack>
+        )}
 
         <Text lineHeight={24} fontSize={14}>
           <Text bold>Description : </Text>
           {product.description}
         </Text>
 
-        <Button
-          onPress={addToCart}
-          bg={Colors.main} color={Colors.white} mt={10} borderRadius={30} bold>
-          ADD TO CART
-        </Button>
+        {product.quantity > 0 ? (
+          <Button
+            bg={Colors.main} color={Colors.white} mt={10} borderRadius={30} bold
+            onPress={addToCart}
+          >
+            ADD TO CART
+          </Button>
+        ) : (
+          <Button
+            bg={Colors.red} color={Colors.white} mt={10} borderRadius={30} bold
+            disabled
+          >
+            ADD TO CART
+          </Button>
+        )}
 
         <Box safeArea flex={1} p={3} bg={Colors.subGreen}>
           <ReviewProduct productId={product._id} />
 
           {/* Render Similar Products wrapped with the product category */}
           <SimilarProduct navigation={navigation} products={similarProducts} category={product.category} />
-
         </Box>
       </ScrollView>
     </Box>
   );
 };
 export default SingleProductScreen;
-
-

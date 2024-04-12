@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ScrollView, Pressable, Box, Heading, Text, Image, Flex } from 'native-base';
 import { Colors } from '../../colors';
 var Buffer = require('buffer/').Buffer;
 
 const SimilarProduct = ({ navigation, products, category }) => {
   const [isPressed, setIsPressed] = useState(null);
+  const scrollViewRef = useRef();
 
   // Filter products based on the category
   const similarProducts = products.filter(product => product.category === category);
@@ -15,27 +16,40 @@ const SimilarProduct = ({ navigation, products, category }) => {
   // Get the last four products
   const lastFourProducts = sortedProducts.slice(0, 4);
 
-  // Show a message if no similar products are found
-  if (similarProducts.length === 0) {
-    return (
-      <Heading bold fontSize={15} mb={2} mt={2}>
-        SIMILAR PRODUCT NOT AVAILABLE.
-      </Heading>
-    );
-  }
-
   // Function to convert Buffer to base64
   const bufferToBase64 = (buffer) => {
     return Buffer.from(buffer).toString('base64');
   };
 
-  const handlePress = (id) => {
-    navigation.navigate("Single", { id });
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (scrollViewRef.current) {
+        scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: true });
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  const handlePress = (productId) => {
+    navigation.navigate("Single", { id: productId });
+  };
+
+  const scrollToTop = () => {
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: true });
+    }
   };
 
   return (
     <Box flex={1}>
-      <ScrollView flex={1} showsVerticalScrollIndicator={false} px={4} pt={4}>
+      <ScrollView
+        ref={scrollViewRef}
+        flex={1}
+        showsVerticalScrollIndicator={false}
+        px={4}
+        pt={4}
+      >
         <Heading bold fontSize={15} mb={2}>
           SIMILAR PRODUCTS:
         </Heading>
@@ -45,7 +59,10 @@ const SimilarProduct = ({ navigation, products, category }) => {
               key={similarProduct._id}
               onPressIn={() => setIsPressed(similarProduct._id)}
               onPressOut={() => setIsPressed(null)}
-              onPress={() => handlePress(similarProduct._id)}
+              onPress={() => {
+                handlePress(similarProduct._id);
+                scrollToTop();
+              }}
               w="45%"
               rounded="md"
               shadow={2}
@@ -88,7 +105,3 @@ const SimilarProduct = ({ navigation, products, category }) => {
 }
 
 export default SimilarProduct;
-
-
-
-
