@@ -5,7 +5,12 @@ const Review = require('../Models/ReviewModel');
 // API to add review and rating for a product.
 router.post("/addReview", async (req, res) => {
     try {
-        const { userID, userName, productID, rate, review } = req.body;
+        const { userID, userName, productID, productName, rate, review } = req.body;
+
+        // Check if required fields are provided
+        if (!userID || !userName || !productID || !productName || !rate || !review) {
+            return res.status(400).json({ error: "Missing required fields" });
+        }
 
         // Check if there is an existing review by the same user for the same product
         const existingReview = await Review.findOne({ userID, productID });
@@ -22,6 +27,7 @@ router.post("/addReview", async (req, res) => {
                 userID,
                 userName,
                 productID,
+                productName,
                 rate,
                 review
             });
@@ -33,6 +39,7 @@ router.post("/addReview", async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" }); 
     }
 });
+
 
 // API to get the review and rating for a product with productID
 router.get("/getReview/:id", async (req, res) => {
@@ -53,6 +60,25 @@ router.get("/getReview/:id", async (req, res) => {
     } catch (error) {
         console.error("Error fetching reviews:", error);
         res.status(500).json({ error: "Internal Server Error" }); 
+    }
+});
+
+// API to get reviews by product name
+router.get("/searchReview/:key", async (req, res) => {
+    try {
+        let result = await Review.find({
+            "$or": [
+                { userID: { $regex: req.params.key, $options: 'i' } },
+                { userName: { $regex: req.params.key, $options: 'i' } },
+                { productID: { $regex: req.params.key, $options: 'i' } },
+                { productName: { $regex: req.params.key, $options: 'i' } },
+            ]
+        });
+
+        res.status(200).send(result);
+    } catch (error) {
+        console.error("Error searching products:", error);
+        res.status(500).send({ error: 'Internal Server Error' });
     }
 });
 

@@ -9,8 +9,6 @@ const User = require("../Models/User");
 require("dotenv").config();
 router.use(express.json());
 
-
-
 // API to check existing email to prevent same email register 
 router.post('/check-email', async (req, res) => {
     const { email } = req.body;
@@ -18,13 +16,13 @@ router.post('/check-email', async (req, res) => {
     try {
         const user = await User.findOne({ email });
         if (user) {
-            res.json({ emailExists: true });
+            res.send({ emailExists: true });
         } else {
-            res.json({ emailExists: false });
+            res.send({ emailExists: false });
         }
     } catch (error) {
         console.error("Error checking email:", error);
-        res.status(500).json({ error: "Failed to check email." });
+        res.status(500).send({ error: "Failed to check email." });
     }
 });
 
@@ -71,7 +69,6 @@ router.post("/register", async (req, resp) => {
 });
 
 
-
 // API for login
 router.post("/login", async (req, resp) => {
     try {
@@ -99,52 +96,17 @@ router.post("/login", async (req, resp) => {
                         }
                     });
                 } else {
-                    resp.send({ result: "Invalid email or password." });
+                    resp.send({success: true, result: "Invalid email or password." });
                 }
             } else {
-                resp.send({ result: "No user found." });
+                resp.send({success: false, result: "No user found." });
             }
         } else {
-            resp.status(400).send({ result: "Invalid request. Please provide both email and password." });
+            resp.status(400).send({success: false, result: "Invalid request. Please provide both email and password." });
         }
     } catch (error) {
-        resp.status(500).send({ error: "Failed to login." });
+        resp.status(500).send({success: false, error: "Failed to login." });
     }
 });
-
-// API to change admin password
-router.post("/changePassword/:id", async (req, resp) => {
-    try {
-        const { email, oldPassword, newPassword, confirmPassword } = req.body;
-        const user = await User.findOne({ email })
-
-        if (!user) {
-            console.error("No user found with this email");
-        }
-
-        const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
-        console.log(isPasswordMatch);
-
-        if (!isPasswordMatch) {
-            return resp.send({ result: "old password is incorrect" })
-        }
-
-        if (newPassword !== confirmPassword) {
-            return resp.send({ result: "new password & confirm password doesn't matched." })
-        }
-
-        const hashNewPassword = await bcrypt.hash(newPassword, `${process.env.SALT}`)
-
-        // Update the user's password in the database
-        user.password = hashNewPassword;
-
-        await user.save()
-        resp.send({ result: "Password changed" })
-
-    } catch (error) {
-        resp.status(500).send({ error: "Failed to change password." });
-    }
-})
-
 
 module.exports = router;

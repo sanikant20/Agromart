@@ -7,7 +7,7 @@ const router = express.Router();
 
 // APIs for Admin
 
-// API to get all users from database and list users in card AdminDashboard
+// API to get all users from database and list users in AdminDashboard
 router.get('/users', async (req, resp) => {
     try {
         let users = await User.find();
@@ -66,8 +66,8 @@ router.get('/adminProfile/:id', async (req, resp) => {
         resp.status(500).send({ error: 'Internal Server Error' });
     }
 });
-
-// API to edit profile details
+ 
+// API to edit profile details : ADMIN
 router.put("/editProfile/:id", async (req, resp) => {
     try {
         const data = await User.updateOne({
@@ -123,7 +123,7 @@ router.put("/editUserProfile/:id", async (req, resp) => {
     }
 })
 
-// API to search users
+// API to search users : ADMIN Portal
 router.get("/searchUser/:key", async (req, res) => {
     try {
         let result = await User.find({

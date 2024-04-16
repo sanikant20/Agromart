@@ -20,7 +20,6 @@ let storage = multer.diskStorage({
 // Image Handler
 const upload = multer({ storage: storage })
 
-
 // API to add new products with image
 router.post("/addProducts", upload.single('product_image'), async (req, resp) => {
     try {
@@ -87,8 +86,6 @@ router.put('/products/:id', upload.single('image'), async (req, resp) => {
 });
 
 
-
-
 // API to get all products list products in AdminDashboard & Mobile
 router.get('/products', async (req, resp) => {
     try {
@@ -100,7 +97,7 @@ router.get('/products', async (req, resp) => {
             resp.status(404).send({ result: "No product found" })
         }
     } catch (error) {
-        console.error("Error in fetching product data: ", error);
+        // console.error("Error in fetching product data: ", error);
         resp.send(500).send({ error: "Internal Server Error" })
     }
 })
@@ -128,7 +125,7 @@ router.get('/in-out-stock-products', async (req, resp) => {
     }
 });
 
-// API to get products details: ADMIN
+// API to get products details for edit form: ADMIN
 router.get("/editProducts/:id", async (req, res) => {
     try {
         let result = await Product.findOne({ _id: req.params.id });
@@ -148,14 +145,7 @@ router.get("/products/:id", async (req, res) => {
     try {
         let result = await Product.findOne({ _id: req.params.id });
         if (result) {
-            // Check if the quantity is 0
-            if (result.quantity === 0) {
-                // If quantity is 0, send outOfStock message
-                res.status(200).send({ message: "outOfStock" });
-            } else {
-                // If quantity is not 0, send the product details
-                res.status(200).send(result);
-            }
+            res.status(200).send(result);
         } else {
             res.status(404).send({ message: "No data available with this ID:" });
         }

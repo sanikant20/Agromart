@@ -6,7 +6,7 @@ const router = express.Router();
 const Categories = require('../Models/Categories');
 
 
-// API to add new category
+// API to add new category : ADMIN Dashboard Portal
 router.post('/addCategory', async (req, resp) => {
     try {
         // Check all field are present or not
@@ -27,9 +27,7 @@ router.post('/addCategory', async (req, resp) => {
     }
 });
 
-
-
-// API to get all categories
+// API to get all categories : ADMIN Dashboard Portal
 router.get("/category", async (req, resp) => {
     try {
         let allCategory = await Categories.find()
@@ -46,7 +44,7 @@ router.get("/category", async (req, resp) => {
 })
 
 
-// API to get a specific category details 
+// API to get a single category detail : ADMIN Dashboard Portal
 router.get("/category/:id", async (req, resp) => {
     try {
         const result = await Categories.findOne({ _id: req.params.id });
@@ -62,7 +60,7 @@ router.get("/category/:id", async (req, resp) => {
 })
 
 
-// API to edit Category
+// API to edit Category : ADMIN Dashboard Portal
 router.put('/category/:id', async (req, resp) => {
     try {
         const result = await Categories.updateOne(
@@ -79,7 +77,7 @@ router.put('/category/:id', async (req, resp) => {
     }
 })
 
-// APi to delete category
+// APi to delete category : ADMIN Dashboard Portal
 router.delete('/delete/:id', async (req, resp) => {
     try {
         const categoryID = req.params.id;
@@ -99,7 +97,7 @@ router.delete('/delete/:id', async (req, resp) => {
     }
 })
 
-// API to search category
+// API to search category : ADMIN Dashboard Portal
 router.get("/search/:key", async (req, resp) => {
     try {
         let result = await Categories.find({

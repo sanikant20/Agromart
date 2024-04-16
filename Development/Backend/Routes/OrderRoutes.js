@@ -1,8 +1,5 @@
 const express = require('express');
-const { route } = require('./Auth');
 const router = express.Router();
-const multer = require("multer");
-const fs = require('fs');
 
 const OrderModel = require('../Models/OrderModel');
 const CartModel = require('../Models/CartModel')
@@ -22,12 +19,6 @@ router.post("/placeOrder", async (req, resp) => {
 
         // Loop through the cart items to process them
         for (const cartItem of cart) {
-            // Check if the cart item has image data, if yes, skip it
-            if (cartItem.image) {
-                continue;
-            }
-
-            // Find if there's an existing order for the user
             const existingOrder = await OrderModel.findOne({ user_id });
 
             if (existingOrder) {
@@ -35,7 +26,6 @@ router.post("/placeOrder", async (req, resp) => {
                 const existingProduct = existingOrder.products.find(product => product.product_id === cartItem.product_id);
 
                 if (existingProduct) {
-                    // If the product exists, update the quantity
                     existingProduct.quantity += cartItem.quantity;
                 } else {
                     // If the product does not exist, add it to the products array
@@ -72,7 +62,7 @@ router.post("/placeOrder", async (req, resp) => {
         }
 
         // Remove products from the cart after placing the order
-        await CartModel.deleteMany({ _id: { $in: cart.map(item => item._id) } });
+        await CartModel.deleteMany({ 'products._id': { $in: cart.map(item => item._id) } });
 
         resp.status(200).send({ success: true, message: "Order placed successfully." });
     } catch (error) {
@@ -95,8 +85,8 @@ router.post("/markOrderPaid", async (req, resp) => {
         }
 
         // Update payment status to 'Paid' and set payment date to current date and time
-        order.set('payment.status', 'Paid'); // Use .set() method to modify nested properties
-        order.set('payment.paymentDate', new Date()); // Use .set() method to modify nested properties
+        order.set('payment.status', 'Paid'); 
+        order.set('payment.paymentDate', new Date()); 
         await order.save();
 
         resp.status(200).send({ success: true, message: "Order marked as paid successfully." });
@@ -144,8 +134,6 @@ router.put('/changeOrderStatus/:id', async (req, res) => {
 
         // Update the order status
         order.orderStatus = newStatus;
-
-        // Save the updated order
         await order.save();
 
         // Return the updated order
@@ -157,23 +145,22 @@ router.put('/changeOrderStatus/:id', async (req, res) => {
 });
 
 
-// Route to get orders data for a specific user with user email
+// Route to get orders data for a specific user with user id
 router.post('/myOrderData', async (req, res) => {
     try {
         // Validate incoming data
-        const { user_email } = req.body;
-        if (!user_email) {
-            return res.status(400).send({ success: false, message: "Email is required" });
+        const { user_id } = req.body;
+        if (!user_id) {
+            return res.status(400).send({ success: false, message: "User ID is required" });
         }
 
-        // Find order data for the provided email
-        const order = await OrderModel.findOne({ user_email });
+        // Find order data for the provided user ID
+        const order = await OrderModel.findOne({ user_id });
         if (!order) {
             // If no order data found
-            return res.status(404).send({ success: false, message: "No order data found for the provided email" });
+            return res.status(404).send({ success: false, message: "No order data found for the provided user ID" });
         }
-        res.status(200).send({ success: true, order })
-        console.log("Order Data:", order);
+        res.status(200).send({ success: true, order });
 
     } catch (error) {
         console.error("Server Error:", error.message);
@@ -209,7 +196,6 @@ router.get('/singleOrderData/:id', async (req, resp) => {
         resp.status(500).send("Internal Server Error");
     }
 });
-
 
 // API to search order : ADMIN
 router.get("/searchOrder/:key", async (req, res) => {

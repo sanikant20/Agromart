@@ -19,8 +19,12 @@ const storage = multer.diskStorage({
 // Image Handler
 const upload = multer({ storage: storage });
 
+// API to add product to cart
 router.post("/AddToCart", upload.single('image'), async (req, resp) => {
     try {
+        if (!req.file || !req.file.filename) {
+            return resp.status(400).send({ success: false, msg: "Image file not provided" });
+        }
         const imagePath = 'imageFile/CartProductImage/' + req.file.filename;
         const image = {
             data: fs.readFileSync(imagePath),
@@ -38,31 +42,48 @@ router.post("/AddToCart", upload.single('image'), async (req, resp) => {
         existingProduct.quantity -= parseInt(req.body.quantity);
         await existingProduct.save();
 
-        // Check if the product already exists in the cart
-        const existingCartProduct = await Cart.findOne({
-            product_id: req.body.product_id,
-            user_id: req.body.user_id
-        });
+        // Check if the user has an existing cart
+        let cart = await Cart.findOne({ user_id: req.body.user_id });
 
-        if (existingCartProduct) {
-            // Increment quantity if product already exists in the cart
-            existingCartProduct.quantity += parseInt(req.body.quantity);
-            await existingCartProduct.save();
-            resp.status(200).send({ success: true, msg: "Product quantity updated", data: existingCartProduct });
+        if (cart) {
+            // Check if the product already exists in the cart for this user
+            const existingCartItemIndex = cart.products.findIndex(product => product.product_id === req.body.product_id);
+
+            if (existingCartItemIndex !== -1) {
+                // Increment quantity if product already exists in the cart
+                cart.products[existingCartItemIndex].quantity += parseInt(req.body.quantity);
+            } else {
+                // Add new product to cart
+                cart.products.push({
+                    product_id: req.body.product_id,
+                    category: req.body.category,
+                    name: req.body.name,
+                    price: req.body.price,
+                    quantity: req.body.quantity,
+                    weight: req.body.weight,
+                    description: req.body.description,
+                    image: image,
+                });
+            }
+            await cart.save();
+            resp.status(200).send({ success: true, msg: "Product added to cart", data: cart });
         } else {
-            // Add new product to cart
-            const cart = new Cart({
+            // Create a new cart and add the product
+            const newCart = new Cart({
                 user_id: req.body.user_id,
-                product_id: req.body.product_id,
-                category: req.body.category,
-                name: req.body.name,
-                price: req.body.price,
-                quantity: req.body.quantity,
-                weight: req.body.weight,
-                description: req.body.description,
-                image: image,
+                products: [{
+                    product_id: req.body.product_id,
+                    category: req.body.category,
+                    name: req.body.name,
+                    price: req.body.price,
+                    quantity: req.body.quantity,
+                    weight: req.body.weight,
+                    description: req.body.description,
+                    image: image,
+                }]
             });
-            let cartData = await cart.save();
+
+            let cartData = await newCart.save();
             resp.status(200).send({ success: true, msg: "Product added to cart", data: cartData });
         }
     } catch (error) {
@@ -76,18 +97,17 @@ router.get("/CartData/:userId", async (req, resp) => {
     try {
         const userId = req.params.userId;
 
-        // Fetch cart products for the user
-        const cartData = await Cart.find({ user_id: userId });
+        // Fetch cart data for the user
+        const cart = await Cart.findOne({ user_id: userId });
 
-        if (cartData.length > 0) {
-            // If cart is not empty, send cart products along with cart item count
-            const cartItemCount = cartData.length;
-            console.log("Total cart item count :", cartItemCount)
-            resp.status(200).json({ success: true, msg: "Cart Products Retrieved", cartItemCount, data: cartData });
-            console.log("Total cart item count :", cartItemCount)
+        if (cart) {
+            // If cart exists, calculate cart item count based on the length of the products array
+            const cartItemCount = cart.products.length;
+            console.log("Total cart item count:", cartItemCount);
+            resp.status(200).json({ success: true, msg: "Cart Products Retrieved", cartItemCount, data: cart.products });
         } else {
             // If cart is empty, send a message indicating so
-            resp.status(200).json({ success: true, msg: "Cart is empty for this user", cartItemCount: 0 });
+            resp.status(200).json({ success: true, msg: "Cart is empty for this user", cartItemCount: 0, data: [] });
         }
     } catch (error) {
         resp.status(400).json({ success: false, msg: error.message });
@@ -95,30 +115,40 @@ router.get("/CartData/:userId", async (req, resp) => {
 });
 
 
+// API to delete cart product
 router.delete('/deleteCartProducts/:id', async (req, resp) => {
     try {
         // Get requested cart product id 
         const cartProductId = req.params.id;
-        const existingProduct = await Cart.findById(cartProductId);
 
-        if (!existingProduct) {
+        // Find the cart of the user
+        const cart = await Cart.findOne({ 'products._id': cartProductId });
+
+        if (!cart) {
+            return resp.status(404).send({ error: 'Cart not found' });
+        }
+
+        // Find the index of the product within the cart
+        const productIndex = cart.products.findIndex(product => product._id.toString() === cartProductId);
+
+        if (productIndex === -1) {
             return resp.status(404).send({ error: 'Product not found in cart' });
         }
 
         // Find the associated product
-        const product = await Product.findById(existingProduct.product_id);
+        const product = await Product.findById(cart.products[productIndex].product_id);
 
         if (!product) {
             return resp.status(404).send({ error: 'Associated product not found' });
         }
 
         // Increase the product quantity
-        product.quantity += existingProduct.quantity;
+        product.quantity += cart.products[productIndex].quantity;
         await product.save();
 
-        // Delete the cart product
-        const del = await Cart.deleteOne({ _id: cartProductId });
-        console.log("Deleted cart product data: ", del);
+        // Remove the product from the cart
+        cart.products.splice(productIndex, 1);
+        await cart.save();
 
         resp.status(200).send({ success: true, msg: `Product with id ${cartProductId} deleted successfully from cart.` });
     } catch (error) {
@@ -126,28 +156,6 @@ router.delete('/deleteCartProducts/:id', async (req, resp) => {
         resp.status(500).send({ error: "Internal Server Error" });
     }
 });
-
-
-// // API to delete cart product
-// router.delete('/deleteCartProducts/:id', async (req, resp) => {
-//     try {
-//         // get requested product id 
-//         const cartProductId = req.params.id;
-//         const existingProduct = await Cart.findById(cartProductId);
-
-//         if (!existingProduct) {
-//             return resp.status(404).send({ error: 'Product not found on cart' });
-//         }
-
-//         const del = await Cart.deleteOne({ _id: cartProductId });
-//         console.log("Deleted cart product data: ", del);
-//         resp.status(200).send({ success: true, msg: `Product with id ${cartProductId} deleted successfully from cart.` });
-
-//     } catch (error) {
-//         console.error("Error in deleting cart product:", error);
-//         resp.status(500).send({ error: "Internal Server Error" });
-//     }
-// });
 
 
 module.exports = router;

@@ -62,7 +62,7 @@ router.post("/changeAdminPassword", async (req, resp) => {
 
 
 
-//API to Change password : USER
+//API to Change password : CUSTOMER
 router.post('/changeUserPassword', async (req, res) => {
     const { email, oldPassword, newPassword } = req.body;
 
