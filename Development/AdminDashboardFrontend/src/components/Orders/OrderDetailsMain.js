@@ -60,7 +60,6 @@ const OrderDetailMain = () => {
         return <div>Loading...</div>;
     }
 
-
     return (
         <section className="content-main">
             <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -78,18 +77,17 @@ const OrderDetailMain = () => {
                     <div className="col-lg-6 col-md-6">
                         <span>
                             <i className="far fa-calendar-alt mx-2"></i>
-                            <b className="text-black">First Order Date: {new Date(order.createdAt).toLocaleDateString()}</b>
+                            <b className="text-black">First Order Date: {new Date(order.createdAt).toLocaleString()}</b>
                             <br />
                             <i className="far fa-calendar-alt mx-2"></i>
-                            <b className="text-black">Latest Order Date: {new Date(order.updatedAt).toLocaleDateString()}</b>
+                            <b className="text-black">Latest Order Date: {new Date(order.updatedAt).toLocaleString()}</b>
                             <br />
                             <i className="fa fa-shopping-cart mx-2"></i>
                             <small className="text-black">Order ID: {params.id}</small>
                         </span>
                     </div>
 
-
-                    <div className="col-lg-6 col-md-6 ms-auto d-flex justify-content-end align-item-center">
+                    {/* <div className="col-lg-6 col-md-6 ms-auto d-flex justify-content-end align-item-center">
                         <select className="form-select d-inline-block" style={{ maxWidth: "200px" }} value={newStatus || currentStatus} onChange={handleChangeStatus}>
                             <option value="">Change status</option>
                             <option value="process">Process</option>
@@ -99,27 +97,32 @@ const OrderDetailMain = () => {
                             <option value="delivered">Delivered</option>
                         </select>
 
-                    </div>
+                    </div> */}
                 </header>
                 <div className="card-body">
-
                     {/* Pass order data to OrderDetailInfo component */}
                     <OrderDetailInfo order={order}></OrderDetailInfo>
 
-                    <div className="row">
+                    <div className="row d-flex justify-content-center align-item-center">
+                        {/* Payment Status */}
+                        <div className="col-lg-9">
+                            <div className="col-lg-6 col-md-6 ms-auto d-flex justify-content-end align-item-center">
+                                <select className="form-select d-inline-block" style={{ maxWidth: "200px" }} value={newStatus || currentStatus} onChange={handleChangeStatus}>
+                                    <option value="">Change Payment Status</option>
+                                    <option value="process">Process</option>
+                                    <option value="waiting payment">Waiting payment</option>
+                                    <option value="confirm">Confirmed</option>
+                                    <option value="shipped">Shipped</option>
+                                    <option value="delivered">Delivered</option>
+                                </select>
+
+                            </div>
+                        </div>
+
                         <div className="col-lg-9">
                             <div className="table-responsive">
                                 {/* Pass order data to OrderDetailProducts component */}
                                 <OrderDetailProducts order={order}></OrderDetailProducts>
-                            </div>
-                        </div>
-
-                        {/* Payment details */}
-                        <div className="col-lg-3">
-                            <div className="box shadow-sm bg-light">
-                                <button className="btn btn-dark col-12">
-                                    Mark as Delivered
-                                </button>
                             </div>
                         </div>
                     </div>

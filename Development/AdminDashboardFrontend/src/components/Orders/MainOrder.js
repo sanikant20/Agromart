@@ -7,25 +7,25 @@ const MainOrder = () => {
     const ordersPerPage = 10;
 
     useEffect(() => {
+        const fetchOrderData = async () => {
+            try {
+                const response = await fetch("http://localhost:5000/api/allOrderData");
+                if (!response.ok) {
+                    throw new Error("Error in fetching orders...");
+                }
+                const result = await response.json();
+
+                const newOrder = result.orderData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setOrders(newOrder);
+
+            } catch (error) {
+                console.error(error);
+            }
+        };
         fetchOrderData();
     }, []);
 
-    const fetchOrderData = async () => {
-        try {
-            const response = await fetch("http://localhost:5000/api/allOrderData");
-            if (!response.ok) {
-                throw new Error("Error in fetching orders...");
-            }
-            const result = await response.json();
-            // Sort orders by createdAt date in descending order
-            const newOrder = result.orderData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            
-            setOrders(newOrder);
-        } catch (error) {
-            console.error(error);
-            alert("Error fetching orders: " + error.message);
-        }
-    };
+
 
     const renderOrderRow = (order) => {
         if (!order || !order.products || order.products.length === 0) {
@@ -46,7 +46,7 @@ const MainOrder = () => {
 
         return (
             <tr key={order._id}>
-                <td><b>{order.products[0].name}</b></td>
+                <td><b>{order.user_id}</b></td>
                 <td>{order.user_email}</td>
                 <td>Rs {total}</td>
                 <td>
@@ -81,7 +81,14 @@ const MainOrder = () => {
                 const result = await response.json();
                 setOrders(result.response);
             } else {
-                fetchOrderData();
+                const response = await fetch("http://localhost:5000/api/allOrderData");
+                if (!response.ok) {
+                    throw new Error("Error in fetching orders while searching...");
+                };
+                const result = await response.json();
+                // Sort orders by createdAt date in descending order
+                const newOrder = result.orderData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                setOrders(newOrder);
             }
         } catch (error) {
             console.error(error);
@@ -139,7 +146,7 @@ const MainOrder = () => {
                         <table className="table">
                             <thead>
                                 <tr>
-                                    <th scope="col">Product Name</th>
+                                    <th scope="col">Customer ID</th>
                                     <th scope="col">Customer Email</th>
                                     <th scope="col">Total</th>
                                     <th scope="col">Payment Status</th>

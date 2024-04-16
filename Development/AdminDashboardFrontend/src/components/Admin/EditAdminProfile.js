@@ -6,7 +6,6 @@ const EditAdminProfile = () => {
     const [location, setLocation] = useState('')
     const [role, setRole] = useState('')
     const [email, setEmail] = useState('')
-    // const [image, setImage] = useState('')
 
     const params = useParams();
     const navigate = useNavigate();

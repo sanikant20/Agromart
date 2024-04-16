@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
-
 const OrderDetailProducts = () => {
     const [order, setOrder] = useState(null);
     const params = useParams();
@@ -35,9 +34,8 @@ const OrderDetailProducts = () => {
     }
 
     // Payment 
-    const shippingCost = 20;
     const subTotal = order.products.reduce((total, item) => total + (item.quantity * item.price), 0);
-    const grandTotal = shippingCost + subTotal
+
     return (
         <div>
             <table key={order._id} className="table border table-lg mb-4">
@@ -62,16 +60,8 @@ const OrderDetailProducts = () => {
                         <td colSpan="4">
                             <article className="float-end">
                                 <dl className="dlist">
-                                    <dt className="dlist-term">Subtotal:</dt>
-                                    <dd className="dlist-description">Rs {subTotal}</dd>
-                                </dl>
-                                <dl className="dlist">
-                                    <dt className="dlist-term">Shipping cost:</dt>
-                                    <dd className="dlist-description">Rs {shippingCost}</dd>
-                                </dl>
-                                <dl className="dlist">
                                     <dt className="dlist-term">Grand Total:</dt>
-                                    <dd className="dlist-description"><b>Rs {grandTotal}</b></dd>
+                                    <dd className="dlist-description"><b>Rs {subTotal}</b></dd>
                                 </dl>
                                 <dl className="dlist">
                                     <dt className="dlist-term text-muted">Status:</dt>

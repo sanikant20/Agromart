@@ -1,82 +1,3 @@
-// import React, { useEffect, useState } from "react";
-
-// const OrderDetailInfo = ({ order }) => {
-
-//     const [shipping, setShipping] = useState({}); 
-
-//     useEffect(() => {
-//         const getShippingDetail = async () => {
-//             try {
-//                 const response = await fetch(`http://localhost:5000/api/shippingDetail/${order.userId}`);
-//                 if (!response.ok) {
-//                     throw new Error("Error in fetching API");
-//                 }
-//                 const result = await response.json();
-//                 setShipping(result.response); // Set the response object directly
-//                 console.log("Shipping data:", result.response);
-//             } catch (error) {
-//                 console.log("Error fetching shipping detail:", error.message);
-//             }
-//         };
-//         if (order) {
-//             getShippingDetail();
-//         }
-//     }, [order]);
-
-//     return (
-//         <div className="row mb-5 order-info-wrap">
-//             {/* Display shipping details */}
-//             <div className="col-md-6 col-lg-4">
-//                 <article className="icontext align-items-start">
-//                     <span className="icon icon-sm rounded-circle alert-success">
-//                         <i className="text-success fas fa-user"></i>
-//                     </span>
-//                     <div className="text">
-//                         <h6 className="mb-1"> <b>Customer:</b> </h6>
-//                         <p className="mb-1">Name: {shipping.userName}</p>
-//                     </div>
-//                 </article>
-//             </div>
-
-//             <div className="col-md-6 col-lg-4">
-//                 <article className="icontext align-items-start">
-//                     <span className="icon icon-sm rounded-circle alert-success">
-//                         <i className="text-success fas fa-truck-moving"></i>
-//                     </span>
-
-//                     <div className="text">
-//                         <h6 className="mb-1"><b>Shipping Detail:</b> </h6>
-//                         <p className="mb-1">
-//                             Country: {shipping.country} <br />
-//                             City: {shipping.city} <br />
-//                             Postal Code: {shipping.postalCode} <br />
-//                             Address: {shipping.address}
-//                         </p>
-//                     </div>
-//                 </article>
-//             </div>
-
-//             <div className="col-md-6 col-lg-4">
-//                 <article className="icontext align-items-start">
-//                     <span className="icon icon-sm rounded-circle alert-success">
-//                         <i className="text-success fas fa-calendar-alt"></i>
-//                     </span>
-
-//                     <div className="text">
-//                         <h6 className="mb-1"><b>Shipping Date:</b></h6>
-//                         <p className="mb-1">
-//                             Created At: {new Date(shipping.createdAt).toLocaleDateString()} <br />
-//                             Updated At: {new Date(shipping.updatedAt).toLocaleDateString()}
-//                         </p>
-//                     </div>
-//                 </article>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default OrderDetailInfo;
-
 import React, { useEffect, useState } from "react";
 
 const OrderDetailInfo = ({ order }) => {
@@ -126,7 +47,7 @@ const OrderDetailInfo = ({ order }) => {
                             </span>
                             <div className="text">
                                 <h6 className="mb-1"> <b>Customer:</b> </h6>
-                                <p className="mb-1">Name: {shipping.userName}</p>
+                                <p className="mb-1">Name: {shipping.username}</p>
                             </div>
                         </article>
                     </div>

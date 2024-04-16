@@ -84,7 +84,8 @@ function ShippingScreen() {
       console.log(result);
       setShipping(result);
       alert("Delivery details noted successcully! Please pay for ordered product!")
-      navigation.navigate('Payment');
+      // navigation.navigate('Payment');
+      navigation.navigate('Khalti');
     } catch (error) {
       console.error("Error adding shipping details:", error);
 

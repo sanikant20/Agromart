@@ -220,7 +220,7 @@ function SingleProductScreen({ route }) {
           </Button>
         ) : (
           <Button
-            bg={Colors.red} color={Colors.white} mt={10} borderRadius={30} bold
+            bg={Colors.deepGray} color={Colors.white} mt={10} borderRadius={30} bold
             disabled
           >
             ADD TO CART

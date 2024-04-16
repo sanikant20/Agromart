@@ -98,40 +98,45 @@ const CartItems = () => {
         }
     };
 
-    // Handle checkout to place order
-    const handleCheckout = async () => {
-        try {
-            // Filter out image data from the cart
-            const cartWithoutImages = cart.map(item => {
-                const { image, ...rest } = item;
-                return rest;
-            });
+    // // Handle checkout to place order
+    // const handleCheckout = async () => {
+    //     try {
+    //         // Filter out image data from the cart
+    //         const cartWithoutImages = cart.map(item => {
+    //             const { image, ...rest } = item;
+    //             return rest;
+    //         });
 
-            const orderResponse = await fetch(`${apiUrl}/placeOrder`, {
-                method: "POST",
-                body: JSON.stringify({ user_id: userData._id, user_email: userData.email, cart: cartWithoutImages }),
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+    //         const orderResponse = await fetch(`${apiUrl}/placeOrder`, {
+    //             method: "POST",
+    //             body: JSON.stringify({ user_id: userData._id, user_email: userData.email, cart: cartWithoutImages }),
+    //             headers: {
+    //                 'Content-Type': 'application/json',
+    //             },
+    //         });
 
-            console.log("Status :", orderResponse.status);
+    //         console.log("Status :", orderResponse.status);
 
-            if (!orderResponse.ok) {
-                const errorMessage = await orderResponse.text();
-                throw new Error(`Failed to place order. Error: ${errorMessage}`);
-            }
+    //         if (!orderResponse.ok) {
+    //             const errorMessage = await orderResponse.text();
+    //             throw new Error(`Failed to place order. Error: ${errorMessage}`);
+    //         }
 
-            const orderData = await orderResponse.json();
-            console.log("Order Data:", orderData);
-            // Display order placed successful message
-            alert(orderData.message);
-            navigation.navigate('ShippingDetails');
-        } catch (error) {
-            console.error("Error placing order:", error.message);
-            alert(error.message);
-        }
-    };
+    //         const orderData = await orderResponse.json();
+    //         console.log("Order Data:", orderData);
+    //         // Display order placed successful message
+    //         alert(orderData.message);
+    //         navigation.navigate('ShippingDetails');
+    //     } catch (error) {
+    //         console.error("Error placing order:", error.message);
+    //         alert(error.message);
+    //     }
+    // };
+
+    const handlePayment =()=>{
+        
+    }
+
 
     const handleMainPage = () => {
         navigation.navigate("Main")
@@ -271,7 +276,8 @@ const CartItems = () => {
                     <Button
                         roundedBottomLeft={50}
                         roundedBottomRight={50}
-                        onPress={() => handleCheckout()}
+                        // onPress={() => handleCheckout()}
+                 onPress={handlePayment}
                         mt={4}
                         mb={3}
                         w={'90%'}

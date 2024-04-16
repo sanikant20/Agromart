@@ -5,30 +5,29 @@ const LatestOrders = () => {
     const [latestOrders, setLatestOrders] = useState([]);
 
     useEffect(() => {
+        const fetchLatestOrders = async () => {
+            try {
+                const response = await fetch("http://localhost:5000/api/allOrderData");
+                if (!response.ok) {
+                    throw new Error("Error fetching orders...");
+                }
+                const result = await response.json();
+                // Sort orders by createdAt date in descending order
+                const sortedOrders = result.orderData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                // Get the latest two orders
+                const latestTwoOrders = sortedOrders.slice(0, 2);
+                setLatestOrders(latestTwoOrders);
+            } catch (error) {
+                console.error(error);
+            }
+        };
         fetchLatestOrders();
     }, []);
-
-    const fetchLatestOrders = async () => {
-        try {
-            const response = await fetch("http://localhost:5000/api/allOrderData");
-            if (!response.ok) {
-                throw new Error("Error fetching orders...");
-            }
-            const result = await response.json();
-            // Sort orders by createdAt date in descending order
-            const sortedOrders = result.orderData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            // Get the latest two orders
-            const latestTwoOrders = sortedOrders.slice(0, 2);
-            setLatestOrders(latestTwoOrders);
-        } catch (error) {
-            console.error(error);
-            alert("Error fetching orders: " + error.message);
-        }
-    };
 
     const calculateTotalPrice = (products) => {
         return products.reduce((total, product) => total + (product.quantity * product.price), 0);
     };
+
     return (
         <div className="card-body">
             <h5 className="card-title">Latest Orders</h5>

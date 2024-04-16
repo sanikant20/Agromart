@@ -4,7 +4,7 @@ import Buttone from '../Components/Buttone';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import Colors from '../colors';
 import { useNavigation } from '@react-navigation/native';
-// import khalti from '../Components/KhaltiPayment/Khalti';
+// import Khalti from '../Components/KhaltiPayment/Khalti';
 
 const paymentMethod = [
   {
@@ -28,7 +28,7 @@ function PaymentScreen() {
     try {
       // const paymentResponse = await axi
       console.log("payment method")
-      navigation.navigate('Main')
+      navigation.navigate('Khalti')
     } catch (error) {
 
     }

@@ -3,8 +3,6 @@ import { Link, useParams } from "react-router-dom";
 
 const AdminProfileMain = () => {
     const [user, setUser] = useState('');
-    // const [userImage, setUserImage] = useState(null);
-
     const params = useParams();
 
     // getting the userID from the local storage

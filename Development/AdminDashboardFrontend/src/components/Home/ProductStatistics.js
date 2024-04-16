@@ -5,7 +5,6 @@ import { Doughnut } from "react-chartjs-2";
 // Registering necessary Chart.js components
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-
 // Component to display statistics of in-stock and out-of-stock products using a Doughnut chart.
 const ProductsStatics = () => {
     // State variables to store the number of in-stock and out-of-stock products

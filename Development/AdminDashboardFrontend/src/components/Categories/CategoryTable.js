@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const CategoryTable = () => {
     const [categories, setCategories] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
-    const categoryPerPage = 4; // Change for items on current page 
+    const categoryPerPage = 8; 
 
     // Fetch categories from API
     useEffect(() => {

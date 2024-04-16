@@ -15,7 +15,7 @@ import ProfileScreen from './src/Screens/ProfileScreen';
 import ChangePassword from './src/Components/Profile/ChangePassword';
 import ShippingScreen from './src/Screens/ShippingScreen';
 // import OrderScreen from './src/Screens/OrderScreen';
-import PaymentScreen from './src/Screens/PaymentScreen';
+// import PaymentScreen from './src/Screens/PaymentScreen';
 import khalti from './src/Components/KhaltiPayment/Khalti';
 import { CartProvider } from './src/Components/Cart/CartContext';
 
@@ -24,13 +24,11 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <CartProvider>
-
-
       <NativeBaseProvider>
         <NavigationContainer>
           <StatusBar hidden={false} />
           <Stack.Navigator
-            initialRouteName="Login"
+            initialRouteName="Khalti"
             screenOptions={{
               headerShown: false,
             }}>
@@ -46,11 +44,8 @@ export default function App() {
             <Stack.Screen name="ChangePassword" component={ChangePassword} />
             <Stack.Screen name="ShippingDetails" component={ShippingScreen} />
             {/* <Stack.Screen name="OrderInfo" component={OrderScreen} /> */}
-            <Stack.Screen name="Payment" component={PaymentScreen} />
+            {/* <Stack.Screen name="Payment" component={PaymentScreen} /> */}
             <Stack.Screen name="Khalti" component={khalti} />
-
-
-
           </Stack.Navigator>
         </NavigationContainer>
       </NativeBaseProvider>

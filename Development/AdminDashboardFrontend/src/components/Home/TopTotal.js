@@ -8,7 +8,7 @@ const TopTotal = () => {
 
     // Fetch api to get total users
     useEffect(() => {
-        const getUsers = async () => {
+        const getTotalUsers = async () => {
             try {
                 const response = await fetch("http://localhost:5000/api/users");
                 if (!response.ok) {
@@ -20,12 +20,12 @@ const TopTotal = () => {
                 console.error("Error in fetching users data.");
             }
         };
-        getUsers();
+        getTotalUsers();
     }, []);
 
     // Fetch api to get total orders
     useEffect(() => {
-        const fetchOrderData = async () => {
+        const getTotalOrders = async () => {
             try {
                 const response = await fetch("http://localhost:5000/api/allOrderData");
                 if (!response.ok) {
@@ -35,15 +35,14 @@ const TopTotal = () => {
                 setTotalOrders(result.totalOrders);
             } catch (error) {
                 console.error(error);
-                alert("Error fetching orders: " + error.message);
             }
         };
-        fetchOrderData()
+        getTotalOrders();
     }, []);
 
     // Fetch api to get total products
     useEffect(() => {
-        const getProducts = async () => {
+        const getTotalProducts = async () => {
             try {
                 const response = await fetch("http://localhost:5000/api/products");
                 if (!response.ok) {
@@ -55,12 +54,12 @@ const TopTotal = () => {
                 console.error("Error while fetching data", error);
             }
         };
-        getProducts();
+        getTotalProducts();
     }, []);
 
     // Fetch api to get total category
     useEffect(() => {
-        const getProducts = async () => {
+        const getTotalCategories = async () => {
             try {
                 const response = await fetch("http://localhost:5000/api/category");
                 if (!response.ok) {
@@ -72,7 +71,7 @@ const TopTotal = () => {
                 console.error("Error while fetching data", error);
             }
         };
-        getProducts();
+        getTotalCategories();
     }, []);
 
     return (
@@ -86,14 +85,13 @@ const TopTotal = () => {
                         </span>
                         <div className="text ms-2">
                             <h6 className="mb-1">Total Users</h6>
-                            <span>{totalUsers}</span>
+                            <span>{totalUsers > 0 ? totalUsers : 0}</span>
                         </div>
                     </article>
                 </div>
             </div>
-
+    
             {/* Div to display total orders */}
-
             <div className="col-lg-3">
                 <div className="card card-body mb-4 shadow-sm">
                     <article className="icontext d-flex align-items-center justify-content-center">
@@ -102,13 +100,13 @@ const TopTotal = () => {
                         </span>
                         <div className="text ms-2">
                             <h6 className="mb-1">Total Orders</h6>
-                            <span>{totalOrders}</span>
+                            <span>{totalOrders > 0 ? totalOrders : 0}</span>
                         </div>
                     </article>
                 </div>
             </div>
-
-            {/* Div to display total caretory */}
+    
+            {/* Div to display total category */}
             <div className="col-lg-3">
                 <div className="card card-body mb-4 shadow-sm">
                     <article className="icontext d-flex align-items-center justify-content-center">
@@ -117,12 +115,12 @@ const TopTotal = () => {
                         </span>
                         <div className="text ms-2">
                             <h6 className="mb-1">Total Categories</h6>
-                            <span>{totalCategory}</span>
+                            <span>{totalCategory > 0 ? totalCategory : 0}</span>
                         </div>
                     </article>
                 </div>
             </div>
-
+    
             {/* Div to display total products */}
             <div className="col-lg-3">
                 <div className="card card-body mb-4 shadow-sm">
@@ -132,15 +130,13 @@ const TopTotal = () => {
                         </span>
                         <div className="text ms-2">
                             <h6 className="mb-1">Total Products</h6>
-                            <span>{totalProducts}</span>
+                            <span>{totalProducts > 0 ? totalProducts : 0}</span>
                         </div>
                     </article>
                 </div>
             </div>
-
-
         </div>
-    )
+    );
 }
 
 export default TopTotal;

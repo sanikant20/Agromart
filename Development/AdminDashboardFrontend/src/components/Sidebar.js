@@ -15,7 +15,6 @@ const Sidebar = () => {
                     </Link>
                 </div>
 
-
                 <nav>
                     <ul className="menu-aside">
                         <li className="menu-item">
@@ -40,18 +39,6 @@ const Sidebar = () => {
                             </NavLink>
                         </li>
 
-                        {/* <li className="menu-item">
-                            <NavLink activeClassName="active"
-                                className="menu-link"
-                                to="/addProduct"
-                                exact={true}
-                            >
-                                <i className="icon fas fa-plus-square"></i>
-                                <span className="text">Add product</span>
-                            </NavLink>
-                        </li> */}
-
-
                         <li className="menu-item">
                             <NavLink activeClassName="active"
                                 className="menu-link"
@@ -74,17 +61,6 @@ const Sidebar = () => {
                             </NavLink>
                         </li>
 
-                        {/* <li className="menu-item">
-                            <NavLink activeClassName="active"
-                                className="menu-link"
-                                to="/order"
-                                exact={true}
-                            >
-                                <i className="icon fas fa-box-open"></i>
-                                <span className="text">Orders Details</span>
-                            </NavLink>
-                        </li> */}
-
                         <li className="menu-item">
                             <NavLink activeClassName="active"
                                 className="menu-link"
@@ -93,6 +69,17 @@ const Sidebar = () => {
                             >
                                 <i className="icon fas fa-user-circle"></i>
                                 <span className="text">Users</span>
+                            </NavLink>
+                        </li>
+
+                        <li className="menu-item">
+                            <NavLink activeClassName="active"
+                                className="menu-link"
+                                to="/productReview"
+                                exact={true}
+                            >
+                                <i className="icon fas fa-box-open"></i>
+                                <span className="text">Product Review</span>
                             </NavLink>
                         </li>
 

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-
 const EditCategory = () => {
     const [categoryName, setCategoryName] = useState('');
     const [description, setDescription] = useState('');
