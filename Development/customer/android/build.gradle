@@ -38,3 +38,13 @@ allprojects {
         maven { url 'https://www.jitpack.io' }
     }
 }
+
+// Khalti 
+implementation ('com.khalti:khalti-android:$latest_version') {
+    transitive = true
+}
+
+compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+   }

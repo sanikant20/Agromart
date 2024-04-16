@@ -6,11 +6,7 @@ const ShippingSchema = new mongoose.Schema(
             type: String,
             required: true
         },
-        userName:{
-            type: String,
-            required: true
-        },
-        country: {
+        username:{
             type: String,
             required: true
         },

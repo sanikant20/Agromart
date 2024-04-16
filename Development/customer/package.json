@@ -29,6 +29,7 @@
     "react-native": "0.72.10",
     "react-native-buffer": "^6.0.3",
     "react-native-dropdown-picker": "^5.4.6",
+    "react-native-khalti-sdk": "^1.0.2",
     "react-native-network-info": "^5.2.1",
     "react-native-numeric-input": "^1.9.1",
     "react-native-pager-view": "6.2.0",
@@ -42,7 +43,8 @@
     "react-native-virtualized-view": "^1.0.0",
     "react-native-webview": "^13.8.4",
     "react-router-dom": "^6.21.1",
-    "recyclerlistview": "^4.2.0"
+    "recyclerlistview": "^4.2.0",
+    "rn-all-nepal-payment": "^1.0.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

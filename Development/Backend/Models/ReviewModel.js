@@ -4,14 +4,18 @@ const ReviewSchema = new mongoose.Schema(
     {
         userID: {
             type: String,
-            require: true
+            required: true
         },
         userName:
         {
             type: String,
-            require: true
+            required: true
         },
         productID: {
+            type: String,
+            required: true
+        },
+        productName: {
             type: String,
             required: true
         },
@@ -20,10 +24,6 @@ const ReviewSchema = new mongoose.Schema(
         },
         review: {
             type: String
-        },
-        date: {
-            type: Date,
-            default: Date.now
         }
     },
     { timestamps: true }
