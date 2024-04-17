@@ -28,7 +28,7 @@ export default function App() {
         <NavigationContainer>
           <StatusBar hidden={false} />
           <Stack.Navigator
-            initialRouteName="Khalti"
+            initialRouteName="Login"
             screenOptions={{
               headerShown: false,
             }}>

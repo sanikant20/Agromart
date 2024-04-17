@@ -17,7 +17,6 @@ const ReviewSchema = new mongoose.Schema(
         },
         productName: {
             type: String,
-            required: true
         },
         rate: {
             type: Number,

@@ -7,11 +7,6 @@ router.post("/addReview", async (req, res) => {
     try {
         const { userID, userName, productID, productName, rate, review } = req.body;
 
-        // Check if required fields are provided
-        if (!userID || !userName || !productID || !productName || !rate || !review) {
-            return res.status(400).json({ error: "Missing required fields" });
-        }
-
         // Check if there is an existing review by the same user for the same product
         const existingReview = await Review.findOne({ userID, productID });
 
