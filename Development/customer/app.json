@@ -7,7 +7,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/Green-Splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#48B600"
     },
@@ -19,7 +19,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/splash.png",
+        "foregroundImage": "./assets/Green-Splash.png",
         "backgroundColor": "#48B600"
       },
       "package": "agromart.android"

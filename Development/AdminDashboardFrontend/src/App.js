@@ -28,7 +28,6 @@ import AdminScreen from './screens/AdminScreen';
 import EditAdminInfo from './screens/EditAdminInfo';
 import ChangePassword from './screens/ChangePasswordScreen';
 
-
 window.Buffer = window.Buffer || require("buffer").Buffer;
 function App() {
   return (

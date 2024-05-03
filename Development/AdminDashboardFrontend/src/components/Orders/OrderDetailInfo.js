@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 
 const OrderDetailInfo = ({ order }) => {
-
     const [shipping, setShipping] = useState({});
     const [shippingError, setShippingError] = useState(false); // State to track if shipping details not available
 
+    // Get shipping details of customer
     useEffect(() => {
         const getShippingDetail = async () => {
             try {
                 // Extract user ID from the order prop
-                const userId = order && order.user_id; // Use 'user_id' instead of 'userId'
+                const userId = order && order.user_id;
                 if (!userId) {
                     throw new Error("User ID not found in order data");
                 }
@@ -19,14 +19,14 @@ const OrderDetailInfo = ({ order }) => {
                 }
                 const result = await response.json();
                 if (result.success) {
-                    setShipping(result.response); // Set the response object directly
+                    setShipping(result.response); 
                     console.log("Shipping data:", result.response);
                 } else {
-                    setShippingError(true); // Set the shipping error flag
+                    setShippingError(true); 
                 }
             } catch (error) {
                 console.log("Error fetching shipping detail:", error.message);
-                setShippingError(true); // Set the shipping error flag
+                setShippingError(true);
             }
         };
         // Check if order is not null or undefined before fetching shipping details

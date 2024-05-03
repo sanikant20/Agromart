@@ -83,16 +83,16 @@ function ShippingScreen() {
       const result = await response.json();
       console.log(result);
       setShipping(result);
-      alert("Delivery details noted successcully! Please pay for ordered product!")
+      alert("Delivery details noted successcully!")
       // navigation.navigate('Payment');
-      navigation.navigate('Khalti');
+      navigation.navigate('Main');
     } catch (error) {
       console.error("Error adding shipping details:", error);
 
     }
   };
 
-
+  // Validate input field
   const validateInputs = () => {
     const errors = {};
 
@@ -178,14 +178,6 @@ function ShippingScreen() {
             >
               Proceed
             </Button>
-            {/* <Button
-              onPress={() => { navigation.navigate('Payment'); }}
-              marginBottom={10}
-              rounded={50}
-              bg={Colors.main} color={Colors.white} mt={5}
-            >
-              Alredy Provided
-            </Button> */}
           </VStack>
         </ScrollView>
       </Box>

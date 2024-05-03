@@ -21,6 +21,7 @@ const SimilarProduct = ({ navigation, products, category }) => {
     return Buffer.from(buffer).toString('base64');
   };
 
+  // navigate to the top of page
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       if (scrollViewRef.current) {
@@ -35,11 +36,11 @@ const SimilarProduct = ({ navigation, products, category }) => {
     navigation.navigate("Single", { id: productId });
   };
 
-  const scrollToTop = () => {
-    if (scrollViewRef.current) {
-      scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: true });
-    }
-  };
+  // const scrollToTop = () => {
+  //   if (scrollViewRef.current) {
+  //     scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: true });
+  //   }
+  // };
 
   return (
     <Box flex={1}>
@@ -61,7 +62,7 @@ const SimilarProduct = ({ navigation, products, category }) => {
               onPressOut={() => setIsPressed(null)}
               onPress={() => {
                 handlePress(similarProduct._id);
-                scrollToTop();
+                // scrollToTop();
               }}
               w="45%"
               rounded="md"

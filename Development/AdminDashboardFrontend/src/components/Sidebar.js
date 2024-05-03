@@ -6,15 +6,11 @@ const Sidebar = () => {
         <div>
             <aside className="navbar-aside" id="offcanvas_aside">
                 <div className="aside-top">
-                    <Link to="/" className="brand-wrap">
-                        <img src="/logo.jpg"
-                            className="logo"
-                            alt="Agromart Logo "
-                            style={{ height: "50px", width: "50px" }}
-                        />
+                    <Link to="/" className="brand-wrap" style={{ textDecoration: "none", color: "black", fontWeight: "bold", fontSize: "1.2em" }}>
+                        <img src="/Green-Splash.png" className="logo" alt="Agromart Logo" style={{ height: "50px", width: "50px", marginRight: "10px" }} />
+                        AgroMart
                     </Link>
                 </div>
-
                 <nav>
                     <ul className="menu-aside">
                         <li className="menu-item">

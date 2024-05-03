@@ -118,7 +118,6 @@ router.get("/CartData/:userId", async (req, resp) => {
 // API to delete cart product
 router.delete('/deleteCartProducts/:id', async (req, resp) => {
     try {
-        // Get requested cart product id 
         const cartProductId = req.params.id;
 
         // Find the cart of the user

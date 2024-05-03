@@ -51,7 +51,6 @@ const OrderSchema = new mongoose.Schema({
         },
         paymentDate: {
             type: Date,
-            default: null // No date is set until the payment done 
         }
     }
 }, { timestamps: true });

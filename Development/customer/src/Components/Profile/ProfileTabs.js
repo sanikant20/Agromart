@@ -5,6 +5,7 @@ import Profile from './Profile';
 import Orders from './Orders';
 import Colors from '../../colors';
 
+// Renders scene
 const renderScene = SceneMap({
     first: Profile,
     second: Orders
@@ -14,6 +15,7 @@ export default function ProfileTabs() {
     const layout = useWindowDimensions();
     const [index, setIndex] = useState(0);
     
+    // State to manage render items
     const [routes] = useState([
         {
             key: "first",
@@ -25,13 +27,14 @@ export default function ProfileTabs() {
         }
     ]);
 
+    // Profile tab renders
     const renderTabsBar = (props) => (
         <TabBar
             {...props}
             tabStyle={styles.tabStyle}
             indicatorStyle={{ backgroundColor: Colors.black }}
-            activeColor={Colors.orange}
-            inactiveColor={Colors.white}
+            activeColor={Colors.white}
+            inactiveColor={Colors.black}
             renderLabel={({ route, color }) => 
                 <Text style={{ color, ...styles.text }}>
                     {route.title}

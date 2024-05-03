@@ -58,7 +58,7 @@ router.get("/getReview/:id", async (req, res) => {
     }
 });
 
-// API to get reviews by product name
+// API to get/search reviews by product name
 router.get("/searchReview/:key", async (req, res) => {
     try {
         let result = await Review.find({

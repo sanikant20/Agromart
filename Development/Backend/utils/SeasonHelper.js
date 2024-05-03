@@ -1,4 +1,3 @@
-
 // Define the seasons and their respective months
 const seasons = [
     { name: 'Winter', startMonth: 1, endMonth: 3 },

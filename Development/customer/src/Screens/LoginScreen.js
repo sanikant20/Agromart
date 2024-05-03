@@ -56,18 +56,18 @@ function LoginScreen() {
     }
   };
 
+  // Navigate to the signup screen 
   const RegisterPage = () => {
-    // Navigate to the signup screen 
     navigation.navigate('SignUp');
   };
 
   return (
-    <Box flex={1} bg={Colors.black}>
+    <Box flex={1} bg={Colors.grey}>
       <Image flex={1}
         alt="logo"
-        resizeMode="cover"
+        resizeMode="stretch"
         w="full"
-        source={require("../../assets/cover.jpg")}>
+        source={require("../../assets/Green.png")}>
       </Image>
 
       <Box w='full' h="full" position="absolute" top="0" px="6" justifyContent="center">

@@ -6,7 +6,6 @@ app.use(express.json());
 const router = express.Router();
 
 // APIs for Admin
-
 // API to get all users from database and list users in AdminDashboard
 router.get('/users', async (req, resp) => {
     try {
@@ -27,10 +26,11 @@ router.get('/total-admin-customer', async (req, resp) => {
     try {
         const users = await User.find();
 
-        // Assuming User is an array of users
+        // Filtering Users with user role
         const admin = users.filter(user => user.role.toLocaleLowerCase() === 'admin');
         const customer = users.filter(user => user.role.toLocaleLowerCase() === 'user');
 
+        // Calculate the length of user of role 
         const totalAdmin = admin.length;
         const totalCustomer = customer.length;
 
@@ -43,7 +43,6 @@ router.get('/total-admin-customer', async (req, resp) => {
 });
 
 
-
 // API to get admin data for profile
 router.get('/adminProfile/:id', async (req, resp) => {
     const userId = req.params.id;
@@ -54,8 +53,8 @@ router.get('/adminProfile/:id', async (req, resp) => {
     }
 
     try {
+        // Find user data with the userId
         const userData = await User.findOne({ _id: userId });
-
         if (userData) {
             resp.status(200).send(userData);
         } else {
@@ -84,7 +83,7 @@ router.put("/editProfile/:id", async (req, resp) => {
 })
 
 // =====================================================================
-// APIs for users
+// APIs for Customer
 
 // API to get User data for profile
 router.get('/userData/:id', async (req, resp) => {
@@ -105,7 +104,6 @@ router.get('/userData/:id', async (req, resp) => {
         resp.status(500).send({ error: error.message });
     }
 });
-
 
 // API to edit user profile details
 router.put("/editUserProfile/:id", async (req, resp) => {

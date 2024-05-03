@@ -44,7 +44,6 @@ router.get("/season", async (req, resp) => {
     }
 })
 
-
 // API to fetch products with the current season
 router.get("/seasonalProduct", async (req, res) => {
     try {

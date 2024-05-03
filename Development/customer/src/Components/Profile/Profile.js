@@ -130,6 +130,7 @@ const Profile = () => {
     }
   };
 
+  // Render input field
   const renderInputField = (input) => {
     return (
       <FormControl key={input.label}>
@@ -159,6 +160,7 @@ const Profile = () => {
     );
   };
 
+  // Loader
   if (loading) {
     return (
       <Box h="full" bg={Colors.white} px={5} justifyContent="center" alignItems="center">

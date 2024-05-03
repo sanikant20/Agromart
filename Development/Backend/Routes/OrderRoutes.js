@@ -39,7 +39,6 @@ router.post("/placeOrder", async (req, resp) => {
                         description: cartItem.description
                     });
                 }
-
                 // Save the updated order
                 await existingOrder.save();
             } else {
@@ -61,6 +60,9 @@ router.post("/placeOrder", async (req, resp) => {
             }
         }
 
+        // Update payment status to 'paid' for the user's orders
+        await OrderModel.updateMany({ user_id, 'payment.status': { $ne: 'Paid' } }, { $set: { 'payment.status': 'Paid' } });
+
         // Remove products from the cart after placing the order
         await CartModel.deleteMany({ 'products._id': { $in: cart.map(item => item._id) } });
 
@@ -70,32 +72,6 @@ router.post("/placeOrder", async (req, resp) => {
         resp.status(500).send({ success: false, message: "Error placing order", error: error.message });
     }
 });
-
-// Route to mark an order as paid and store payment date 
-router.post("/markOrderPaid", async (req, resp) => {
-    try {
-        const { orderId } = req.body;
-        if (!orderId) {
-            return resp.status(400).send({ success: false, message: "Please provide orderId" });
-        }
-
-        const order = await OrderModel.findById(orderId);
-        if (!order) {
-            return resp.status(404).send({ success: false, message: "Order not found" });
-        }
-
-        // Update payment status to 'Paid' and set payment date to current date and time
-        order.set('payment.status', 'Paid'); 
-        order.set('payment.paymentDate', new Date()); 
-        await order.save();
-
-        resp.status(200).send({ success: true, message: "Order marked as paid successfully." });
-    } catch (error) {
-        console.error(error);
-        resp.status(500).send({ success: false, message: "Error marking order as paid", error: error.message });
-    }
-});
-
 
 // API endpoint to get current order status : ADMIN 
 router.get('/getOrderStatus/:id', async (req, res) => {
@@ -214,7 +190,5 @@ router.get("/searchOrder/:key", async (req, res) => {
         res.status(500).json({ success: false, error: 'Internal Server Error' });
     }
 });
-
-
 
 module.exports = router;

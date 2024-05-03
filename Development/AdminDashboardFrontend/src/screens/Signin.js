@@ -67,7 +67,7 @@ const LoginForm = () => {
             <form className="Auth-form" onSubmit={handleLogin}>
                 <div className="Auth-form-content">
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} >
-                        <img src="/logo.jpg"
+                        <img src="/Green-Splash.png"
                             className="logo"
                             alt="Agromart Logo "
                             style={{ height: "100px", width: "100px" }}

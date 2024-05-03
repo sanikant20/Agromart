@@ -6,6 +6,7 @@ const MainOrder = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const ordersPerPage = 10;
 
+    // Fetch order Data
     useEffect(() => {
         const fetchOrderData = async () => {
             try {
@@ -26,7 +27,7 @@ const MainOrder = () => {
     }, []);
 
 
-
+    // Render into the orders row
     const renderOrderRow = (order) => {
         if (!order || !order.products || order.products.length === 0) {
             return null;
@@ -35,11 +36,9 @@ const MainOrder = () => {
         const total = order.products.reduce((total, item) => total + (item.quantity * item.price), 0);
 
         let paymentStatus = '';
-        let paymentDateTime = '';
-
         if (order.payment && order.payment.status === 'Paid') {
             paymentStatus = 'Paid';
-            paymentDateTime = new Date(order.payment.paymentDate).toLocaleString();
+           
         } else {
             paymentStatus = 'Not Paid';
         }
@@ -51,7 +50,7 @@ const MainOrder = () => {
                 <td>Rs {total}</td>
                 <td>
                     {paymentStatus === 'Paid' ? (
-                        <span className="badge bg-success">Paid on {paymentDateTime}</span>
+                        <span className="badge bg-success">{paymentStatus}</span>
                     ) : (
                         <span className="badge bg-warning">Not Paid</span>
                     )}
@@ -130,12 +129,6 @@ const MainOrder = () => {
                                 <option>confirm</option>
                                 <option>shipped</option>
                                 <option>delivered</option>
-                            </select>
-                        </div>
-                        <div onChange={handleOrderSearch} className="col-lg-2 col-6 col-md-3">
-                            <select className="form-select">
-                                <option value=''>Paymenet Status</option>
-                                <option>Paid</option>
                             </select>
                         </div>
                     </div>

@@ -19,7 +19,6 @@ app.use("/api", require("./Routes/OrderRoutes"));
 app.use("/api", require("./Routes/ReviewRoutes"));
 app.use("/api", require("./Routes/ShippingRoute"));
 app.use("/api", require("./Routes/SeasonRoute"));
-app.use("/api", require("./Routes/Payment"));
 
 // Port to run server
 const port = `${process.env.PORT}`;

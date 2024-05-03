@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { ScrollView, Text, Pressable, Flex, Box, Image, Button, Center, HStack, Spinner } from 'native-base';
+import { ScrollView, SafeAreaView, Text, Pressable, Flex, Box, Image, Button, Center, HStack, Spinner } from 'native-base';
 import Colors from "../../colors";
 import CartEmpty from './CartEmpty';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-var Buffer = require('buffer/').Buffer;
 import { RefreshControl } from 'react-native';
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { useCartContext } from './CartContext';
 import apiUrl from '../../../apiconfig';
+import { KhatiSdk } from 'rn-all-nepal-payment';
+var Buffer = require('buffer/').Buffer;
 
 const CartItems = () => {
     const [cart, setCart] = useState([]);
@@ -18,6 +19,7 @@ const CartItems = () => {
     const isFocused = useIsFocused();
     const navigation = useNavigation();
     const { updateCartItemCount } = useCartContext();
+    const [isVisible, setIsVisible] = useState(false);
 
     // Fetch user data from AsyncStorage when component mounts
     useEffect(() => {
@@ -72,7 +74,6 @@ const CartItems = () => {
         }, 2000);
     }, [userData]);
 
-
     // Fetch cart products when component is focused
     useEffect(() => {
         if (isFocused && Object.keys(userData).length > 0) {
@@ -98,49 +99,12 @@ const CartItems = () => {
         }
     };
 
-    // // Handle checkout to place order
-    // const handleCheckout = async () => {
-    //     try {
-    //         // Filter out image data from the cart
-    //         const cartWithoutImages = cart.map(item => {
-    //             const { image, ...rest } = item;
-    //             return rest;
-    //         });
-
-    //         const orderResponse = await fetch(`${apiUrl}/placeOrder`, {
-    //             method: "POST",
-    //             body: JSON.stringify({ user_id: userData._id, user_email: userData.email, cart: cartWithoutImages }),
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //             },
-    //         });
-
-    //         console.log("Status :", orderResponse.status);
-
-    //         if (!orderResponse.ok) {
-    //             const errorMessage = await orderResponse.text();
-    //             throw new Error(`Failed to place order. Error: ${errorMessage}`);
-    //         }
-
-    //         const orderData = await orderResponse.json();
-    //         console.log("Order Data:", orderData);
-    //         // Display order placed successful message
-    //         alert(orderData.message);
-    //         navigation.navigate('ShippingDetails');
-    //     } catch (error) {
-    //         console.error("Error placing order:", error.message);
-    //         alert(error.message);
-    //     }
-    // };
-
-    const handlePayment =()=>{
-        
-    }
 
 
-    const handleMainPage = () => {
+    // Navigate to main page
+    const handleCancel = () => {
         navigation.navigate("Main")
-    }
+    };
 
     // Function to convert Buffer to base64
     const bufferToBase64 = (buffer) => {
@@ -177,6 +141,53 @@ const CartItems = () => {
             </ScrollView>
         );
     }
+
+    // Place order after the payment is successful
+    const PlaceOrder = async () => {
+        try {
+            const cartWithoutImages = cart.map(item => {
+                const { image, ...rest } = item;
+                return rest;
+            });
+
+            const orderResponse = await fetch(`${apiUrl}/placeOrder`, {
+                method: "POST",
+                body: JSON.stringify({ user_id: userData._id, user_email: userData.email, cart: cartWithoutImages }),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!orderResponse.ok) {
+                const errorMessage = await orderResponse.text();
+                throw new Error(`Failed to place order. Error: ${errorMessage}`);
+            }
+
+            const orderData = await orderResponse.json();
+            alert(orderData.message);
+            navigation.navigate('ShippingDetails');
+        } catch (error) {
+            console.error("Error placing order:", error.message);
+            alert(error.message);
+        }
+    };
+
+    // When the payment is complete render this function
+    const _onPaymentComplete = (data) => {
+        setIsVisible(false);
+        const str = data.nativeEvent.data;
+        const resp = JSON.parse(str);
+        console.log({ resp })
+        if (resp.event === 'CLOSED') {
+            // handle closed action
+        } else if (resp.event === 'SUCCESS') {
+            console.log({ data: resp.data })
+            PlaceOrder(); // Call PlaceOrder when payment is successful
+        } else if (resp.event === 'ERROR') {
+            console.log({ error: resp.data })
+        }
+        return;
+    };
 
     // Render cart items
     return (
@@ -255,7 +266,7 @@ const CartItems = () => {
                         h={45}
                         alignItems="center"
                     >
-                        <Text fontSize="xl" bold>Total Price :</Text>
+                        <Text fontSize="xl" bold>Total Price:</Text>
                         <Button
                             px={10}
                             h={45}
@@ -274,28 +285,54 @@ const CartItems = () => {
                         </Button>
                     </HStack>
                     <Button
-                        roundedBottomLeft={50}
-                        roundedBottomRight={50}
-                        // onPress={() => handleCheckout()}
-                 onPress={handlePayment}
                         mt={4}
                         mb={3}
+                        px={10}
+                        h={45}
                         w={'90%'}
+                        rounded={50}
                         bg={Colors.main}
-                        _pressed={{ bg: Colors.main }}
-                        _text={{ color: Colors.white }}>
+                        _text={{
+                            color: Colors.white,
+                            fontSize: 16,
+                            // fontWeight: "bold"
+                        }}
+                        _pressed={{
+                            bg: Colors.main
+                        }}
+                        onPress={() => setIsVisible(true)}
+                    >
                         Checkout
                     </Button>
+                    <KhatiSdk
+                        amount={TotalPrice * 100} // Number in paisa
+                        isVisible={isVisible} // Bool to show model
+                        paymentPreference={[
+                            // Array of services needed from Khalti
+                            'KHALTI',
+                            'CONNECT_IPS'
+                        ]}
+                        productName={'Dragons'}
+                        productIdentity={'1234567890'} // Unique product identifier at merchant
+                        onPaymentComplete={_onPaymentComplete} // Callback from Khalti Web Sdk
+                        productUrl={'http://gameofthrones.wikia.com/wiki/Dragons'}  // Default khalti productURl
+                        publicKey={'test_public_key_8c27c9a971c74e9ab64f5213fc537cb7'}
+                    />
+                    
                     <Button
                         roundedBottomLeft={50}
                         roundedBottomRight={50}
-                        onPress={() => handleMainPage()}
+                        onPress={() => handleCancel()}
                         mt={4}
                         mb={10}
                         w={'90%'}
                         bg={Colors.blue}
                         _pressed={{ bg: Colors.main }}
-                        _text={{ color: Colors.white }}>
+                        _text={{
+                            color: Colors.white,
+                            fontSize: 16,
+                            // fontWeight: "bold"
+                        }}>
                         Back to home
                     </Button>
                 </Center>
@@ -303,5 +340,14 @@ const CartItems = () => {
         </ScrollView>
     );
 };
+
+const styles = {
+    container: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+};
+
 
 export default CartItems;

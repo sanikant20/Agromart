@@ -49,6 +49,7 @@ const EditProfile = () => {
         fetchUserData();
     }, []);
 
+    // Fetch API for handling to update profile details
     const HandleUpdateProfile = async () => {
         try {
             const response = await fetch(`${apiUrl}/editUserProfile/${userData._id}`, {
@@ -78,11 +79,12 @@ const EditProfile = () => {
         }
     }
 
+    // Cancel to update profile, navigate to profile page
     const HandleCancleUpdateProfile = async () => {
         navigation.navigate("Profile")
-        console.log("Cancel update")
     }
 
+    // change the profile input field with the updated details
     const handleInputChange = (key, value) => {
         setUserData(prevState => ({
             ...prevState,
@@ -90,6 +92,7 @@ const EditProfile = () => {
         }));
     };
 
+    // Render the input fields
     const renderInputField = (input) => {
         return (
             <FormControl key={input.label}>
@@ -121,6 +124,7 @@ const EditProfile = () => {
         );
     };
 
+    // Loader
     if (loading) {
         return (
             <Box h="full" bg={Colors.white} px={5} justifyContent="center" alignItems="center">

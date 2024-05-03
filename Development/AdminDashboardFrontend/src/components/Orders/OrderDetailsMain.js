@@ -22,7 +22,6 @@ const OrderDetailMain = () => {
                 setCurrentStatus(orderData.orderStatus);
             } catch (error) {
                 console.error("Error while fetching order data: ", error);
-                // Handle error
             }
         };
         fetchOrder();
@@ -86,18 +85,6 @@ const OrderDetailMain = () => {
                             <small className="text-black">Order ID: {params.id}</small>
                         </span>
                     </div>
-
-                    {/* <div className="col-lg-6 col-md-6 ms-auto d-flex justify-content-end align-item-center">
-                        <select className="form-select d-inline-block" style={{ maxWidth: "200px" }} value={newStatus || currentStatus} onChange={handleChangeStatus}>
-                            <option value="">Change status</option>
-                            <option value="process">Process</option>
-                            <option value="waiting payment">Awaiting payment</option>
-                            <option value="confirm">Confirmed</option>
-                            <option value="shipped">Shipped</option>
-                            <option value="delivered">Delivered</option>
-                        </select>
-
-                    </div> */}
                 </header>
                 <div className="card-body">
                     {/* Pass order data to OrderDetailInfo component */}
@@ -107,7 +94,10 @@ const OrderDetailMain = () => {
                         {/* Payment Status */}
                         <div className="col-lg-9">
                             <div className="col-lg-6 col-md-6 ms-auto d-flex justify-content-end align-item-center">
-                                <select className="form-select d-inline-block" style={{ maxWidth: "200px" }} value={newStatus || currentStatus} onChange={handleChangeStatus}>
+                                <select className="form-select d-inline-block"
+                                    style={{ maxWidth: "200px" }}
+                                    value={newStatus || currentStatus}
+                                    onChange={handleChangeStatus}>
                                     <option value="">Change Payment Status</option>
                                     <option value="process">Process</option>
                                     <option value="waiting payment">Waiting payment</option>
@@ -115,7 +105,6 @@ const OrderDetailMain = () => {
                                     <option value="shipped">Shipped</option>
                                     <option value="delivered">Delivered</option>
                                 </select>
-
                             </div>
                         </div>
 

@@ -24,6 +24,7 @@ const ChangePassword = () => {
     const [newPasswordError, setNewPasswordError] = useState('');
     const navigation = useNavigation();
 
+    // Retriving the user data from AsyncStorage
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -41,8 +42,10 @@ const ChangePassword = () => {
         fetchUserData();
     }, []);
 
+    // Function for Changing Password
     const handleChangePassword = async () => {
         try {
+            // Validation
             if (!oldPassword) {
                 setOldPasswordError("Please enter old password");
                 return;
@@ -56,6 +59,7 @@ const ChangePassword = () => {
                 setNewPasswordError("");
             }
 
+            // Fetch api of change password
             const response = await fetch(`${apiUrl}/changeUserPassword`, {
                 method: "POST",
                 headers: {
@@ -87,7 +91,7 @@ const ChangePassword = () => {
         }
     };
 
-
+    // Navigate to the profile
     const handleCancelChangePassword = () => {
         navigation.navigate("Profile");
     };

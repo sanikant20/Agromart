@@ -86,7 +86,7 @@ const SignupForm = () => {
             <form className="Auth-form" onSubmit={handleSignup}>
                 <div className="Auth-form-content">
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }} >
-                        <img src="/logo.jpg"
+                        <img src="/Green-Splash.png"
                             className="logo"
                             alt="Agromart Logo "
                             style={{ height: "100px", width: "100px" }}
@@ -97,6 +97,7 @@ const SignupForm = () => {
                         <label>Name</label>
                         <input
                             type="text"
+                            id="name"
                             className="form-control mt-1"
                             placeholder="Enter name"
                             name="name"
@@ -108,6 +109,7 @@ const SignupForm = () => {
                         <label>Address</label>
                         <input
                             type="text"
+                            id="location"
                             className="form-control mt-1"
                             placeholder="Enter address"
                             name="location"
@@ -119,6 +121,7 @@ const SignupForm = () => {
                         <label>Email or Username</label>
                         <input
                             type="text"
+                            id="email"
                             className="form-control mt-1"
                             placeholder="Enter email"
                             name="email"
@@ -130,6 +133,7 @@ const SignupForm = () => {
                         <label>Password</label>
                         <input
                             type="password"
+                            id="password"
                             className="form-control mt-1"
                             placeholder="Enter password"
                             name="password"

@@ -13,7 +13,7 @@ router.post("/checkOldPassword", async (req, res) => {
             console.error("No user found with this email");
             return res.status(404).json({ error: "No user found." });
         }
-
+        // Compare the old Password
         const isPasswordMatch = await bcrypt.compare(oldPassword, user.password);
         res.json({ passwordMatch: isPasswordMatch });
     } catch (error) {
@@ -85,7 +85,7 @@ router.post('/changeUserPassword', async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-        // Update user's password
+        // Update users password
         user.password = hashedPassword;
         await user.save();
         console.log("Password updated")

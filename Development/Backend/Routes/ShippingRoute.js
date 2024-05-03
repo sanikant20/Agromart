@@ -13,7 +13,7 @@ router.post("/addShippingDetails", async (req, res) => {
 
         if (existingShippingDetails) {
             // If userId exists, update the existing shipping details
-            existingShippingDetails.username = username; // Ensure to update the username
+            existingShippingDetails.username = username;
             existingShippingDetails.city = city;
             existingShippingDetails.postalCode = postalCode;
             existingShippingDetails.address = address;
@@ -39,7 +39,6 @@ router.post("/addShippingDetails", async (req, res) => {
     }
 });
 
-
 // API to get shipping details
 router.get("/shippingDetail/:id", async (req, res) => {
     try {
@@ -56,7 +55,5 @@ router.get("/shippingDetail/:id", async (req, res) => {
         res.status(500).json({ success: false, error: "Internal Server Error" });
     }
 });
-
-
 
 module.exports = router;

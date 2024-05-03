@@ -30,6 +30,7 @@ const Orders = () => {
     }
   };
 
+  // Refresh components
   const onRefresh = () => {
     setRefreshing(true);
     fetchOrderData();
@@ -43,14 +44,14 @@ const Orders = () => {
     fetchUserDataFromAsyncStorage();
   }, []);
 
+  // Retrive order datas
   const fetchOrderData = async () => {
     try {
-      console.log("order UserID: ",userData._id)
-      if(userData._id === undefined){
+      console.log("order UserID: ", userData._id)
+      if (userData._id === undefined) {
         Alert("Refresh the order page to get order");
       };
 
-      console.log("Api url:",apiUrl)
       const response = await fetch(`${apiUrl}/myOrderData`, {
         method: "POST",
         body: JSON.stringify({ user_id: userData._id }),
@@ -65,6 +66,7 @@ const Orders = () => {
 
       console.log("Order data:", result);
 
+      // Set the order and the product data
       if (result.success && result.order && result.order.products) {
         setOrderData(result.order.products);
         setOrderStatus(result.order.orderStatus);
@@ -83,7 +85,7 @@ const Orders = () => {
     }
   };
 
-
+  // Effect to focus on getting order data
   useEffect(() => {
     if (isFocused) {
       fetchOrderData();

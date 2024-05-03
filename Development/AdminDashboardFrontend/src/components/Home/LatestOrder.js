@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 const LatestOrders = () => {
     const [latestOrders, setLatestOrders] = useState([]);
 
+    // function to get latest order from all order
     useEffect(() => {
         const fetchLatestOrders = async () => {
             try {
@@ -24,6 +25,7 @@ const LatestOrders = () => {
         fetchLatestOrders();
     }, []);
 
+    // Calculate total price
     const calculateTotalPrice = (products) => {
         return products.reduce((total, product) => total + (product.quantity * product.price), 0);
     };
@@ -37,9 +39,9 @@ const LatestOrders = () => {
                         <thead>
                             <tr>
                                 <th scope="col">Customer Email</th>
-                                <th scope="col">Total</th>
+                                <th scope="col">Total Price</th>
                                 <th scope="col">Order Created At</th>
-                                <th scope="col">Payment Date</th>
+                                <th scope="col">Payment Status</th>
                                 <th scope="col" className="text-end">Action</th>
                             </tr>
                         </thead>
@@ -49,17 +51,17 @@ const LatestOrders = () => {
                                     <td>{order.user_email}</td>
                                     <td> Rs {calculateTotalPrice(order.products)}</td>
                                     <td>
-                                        <span className="badge bg-info">
+                                        <span>
                                             {new Date(order.createdAt).toLocaleString()}
                                         </span>
                                     </td>
                                     <td>
                                         {order.payment.status === 'Paid' ? (
                                             <span className="badge bg-success">
-                                                {new Date(order.payment.paymentDate).toLocaleString()}
+                                                {(order.payment.status)}
                                             </span>
                                         ) : (
-                                            <span className="badge bg-danger">
+                                            <span className="badge bg-warning">
                                                 Not Paid
                                             </span>
                                         )}
